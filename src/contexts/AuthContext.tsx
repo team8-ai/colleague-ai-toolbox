@@ -1,7 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
-import { onAuthStateChanged, signInWithGoogle, signOut, bypassLogin } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
 
 interface AuthContextType {
@@ -13,30 +12,31 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
+// Mock user for bypass authentication
+const mockUser = {
+  uid: 'mock-user-id',
+  email: 'mock@example.com',
+  displayName: 'Development User',
+  photoURL: null,
+  emailVerified: true,
+} as User;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged((user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   const login = async () => {
     try {
       setLoading(true);
       setError(null);
-      await signInWithGoogle();
+      // In development mode, just use the mock user
+      setUser(mockUser);
       toast({
-        title: "Successfully signed in",
-        description: "Welcome to the AI Tool Hub!",
+        title: "Development mode",
+        description: "Successfully signed in as mock user",
       });
     } catch (error: any) {
       console.error("Login error:", error);
@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
-      await bypassLogin();
+      setUser(mockUser);
       toast({
         title: "Development mode",
         description: "Bypassed authentication successfully",
@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       setLoading(true);
-      await signOut();
+      setUser(null);
       toast({
         title: "Signed out",
         description: "You have been successfully signed out",

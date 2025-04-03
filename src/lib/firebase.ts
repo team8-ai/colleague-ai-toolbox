@@ -1,28 +1,24 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/storage";
 import { getStorage } from "firebase/storage";
 
-// Replace with your Firebase config
+// Placeholder config - won't be used in development bypass mode
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY", // Replace with actual key later
-  authDomain: "YOUR_DOMAIN.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "DEVELOPMENT_MODE",
+  authDomain: "DEVELOPMENT_MODE",
+  projectId: "DEVELOPMENT_MODE",
+  storageBucket: "DEVELOPMENT_MODE",
+  messagingSenderId: "DEVELOPMENT_MODE",
+  appId: "DEVELOPMENT_MODE"
 };
 
+// Initialize app but it won't be used in development bypass mode
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-
-// Domain restriction is removed
-// googleProvider.setCustomParameters({
-//   hd: "yourdomain.com"
-// });
 
 export default app;

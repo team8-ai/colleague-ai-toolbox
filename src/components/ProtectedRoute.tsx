@@ -11,6 +11,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useAuth();
 
+  // In dev mode, we can just show a loading indicator briefly
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -20,6 +21,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
+  // If not logged in, redirect to login page
   if (!user) {
     return <Navigate to="/login" replace />;
   }
