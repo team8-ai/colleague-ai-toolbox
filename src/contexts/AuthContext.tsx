@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
-import { onAuthStateChanged, signInWithGoogle, signOut } from '@/lib/auth';
+import { onAuthStateChanged, signInWithGoogle, signOut, bypassLogin } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
 
 interface AuthContextType {
@@ -9,6 +9,7 @@ interface AuthContextType {
   loading: boolean;
   error: Error | null;
   login: () => Promise<void>;
+  bypassAuth: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -50,6 +51,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const bypassAuth = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await bypassLogin();
+      toast({
+        title: "Development mode",
+        description: "Bypassed authentication successfully",
+      });
+    } catch (error: any) {
+      console.error("Bypass login error:", error);
+      setError(error);
+      toast({
+        title: "Authentication error",
+        description: error.message || "Failed to bypass authentication",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
       setLoading(true);
@@ -72,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, error, login, bypassAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );

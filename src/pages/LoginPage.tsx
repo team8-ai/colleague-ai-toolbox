@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 const LoginPage: React.FC = () => {
-  const { user, loading, login } = useAuth();
+  const { user, loading, login, bypassAuth } = useAuth();
 
   // If the user is already logged in, redirect to home
   if (user) {
@@ -46,9 +46,38 @@ const LoginPage: React.FC = () => {
               </>
             )}
           </Button>
+          
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or
+              </span>
+            </div>
+          </div>
+          
+          <Button
+            onClick={bypassAuth}
+            variant="outline"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              <>
+                Bypass Authentication (Dev Mode)
+              </>
+            )}
+          </Button>
 
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            * Only users with email addresses from your organization can sign in
+            * Development mode allows you to test the app without Google authentication
           </p>
         </div>
       </div>

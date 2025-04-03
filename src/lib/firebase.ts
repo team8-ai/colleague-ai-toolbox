@@ -20,11 +20,9 @@ export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Set custom parameters for Google auth provider
-// This will restrict sign-in to your organization domain
-// Replace "yourdomain.com" with your actual domain
-googleProvider.setCustomParameters({
-  hd: "yourdomain.com"
-});
+// Domain restriction is removed
+// googleProvider.setCustomParameters({
+//   hd: "yourdomain.com"
+// });
 
 export default app;

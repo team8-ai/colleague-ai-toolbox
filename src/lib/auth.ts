@@ -1,6 +1,8 @@
 
 import { 
   signInWithPopup, 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged as firebaseAuthStateChanged,
   User
@@ -10,16 +12,32 @@ import { auth, googleProvider } from "./firebase";
 export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    // Check if user's email belongs to the allowed domain
-    const email = result.user.email;
-    if (!email || !email.endsWith('@yourdomain.com')) {
-      // If not from the allowed domain, sign them out
-      await firebaseSignOut(auth);
-      throw new Error('Only users from your organization can sign in.');
-    }
+    // Domain restriction is now bypassed
     return result.user;
   } catch (error: any) {
     console.error("Error signing in with Google: ", error);
+    throw error;
+  }
+};
+
+// Add a bypass login function for development
+export const bypassLogin = async () => {
+  try {
+    // Use a test email and password
+    const email = "test@example.com";
+    const password = "testpassword123";
+    
+    try {
+      // Try to sign in first
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      return userCredential.user;
+    } catch (loginError) {
+      // If login fails, create the account and then sign in
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      return userCredential.user;
+    }
+  } catch (error: any) {
+    console.error("Error with bypass login: ", error);
     throw error;
   }
 };
