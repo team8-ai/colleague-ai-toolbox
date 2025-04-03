@@ -1,7 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
+import { User } from 'firebase/auth'; // Keep for type compatibility
 import { toast } from '@/hooks/use-toast';
+import { bypassLogin, signOut as authSignOut } from '@/lib/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -28,12 +29,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  // Check for existing auth token on mount
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // In a real app, validate the token with your backend
+      setUser(mockUser);
+    }
+  }, []);
+
   const login = async () => {
     try {
       setLoading(true);
       setError(null);
       // In development mode, just use the mock user
       setUser(mockUser);
+      localStorage.setItem('authToken', 'mock-token-for-development');
       toast({
         title: "Development mode",
         description: "Successfully signed in as mock user",
@@ -55,7 +66,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
-      setUser(mockUser);
+      const user = await bypassLogin();
+      setUser(user || mockUser);
       toast({
         title: "Development mode",
         description: "Bypassed authentication successfully",
@@ -76,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       setLoading(true);
+      await authSignOut();
       setUser(null);
       toast({
         title: "Signed out",

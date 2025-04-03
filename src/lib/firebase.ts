@@ -1,24 +1,24 @@
 
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+// This file is kept for compatibility with existing code
+// but doesn't actually use Firebase anymore
 
-// Placeholder config - won't be used in development bypass mode
-const firebaseConfig = {
-  apiKey: "DEVELOPMENT_MODE",
-  authDomain: "DEVELOPMENT_MODE",
-  projectId: "DEVELOPMENT_MODE",
-  storageBucket: "DEVELOPMENT_MODE",
-  messagingSenderId: "DEVELOPMENT_MODE",
-  appId: "DEVELOPMENT_MODE"
+// Type definitions to maintain compatibility with existing code
+export const auth = {
+  // Empty object to prevent errors in code that might still reference this
 };
 
-// Initialize app but it won't be used in development bypass mode
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const googleProvider = {
+  // Empty object to prevent errors in code that might still reference this
+};
 
-export default app;
+export const db = {
+  // Empty object to prevent errors in code that might still reference this
+};
+
+export const storage = {
+  // Empty object to prevent errors in code that might still reference this
+};
+
+export default {
+  // Empty object to prevent errors in code that might still reference this
+};
