@@ -1,4 +1,3 @@
-
 // API client for communicating with our Postgres backend
 
 // Base URL for API requests - should be configured based on environment
@@ -75,10 +74,6 @@ export const toolsAPI = {
     return fetchAPI(`/tools/${id}`);
   },
   
-  getToolsByCategory: async (category: string) => {
-    return fetchAPI(`/tools/category/${encodeURIComponent(category)}`);
-  },
-  
   getToolsByTag: async (tag: string) => {
     return fetchAPI(`/tools/tag/${encodeURIComponent(tag)}`);
   },
@@ -101,11 +96,7 @@ export const toolsAPI = {
     });
   },
   
-  // Categories and tags
-  getAllCategories: async () => {
-    return fetchAPI('/categories');
-  },
-  
+  // Tags
   getAllTags: async () => {
     return fetchAPI('/tags');
   },

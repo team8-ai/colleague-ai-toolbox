@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -75,9 +74,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
           </Link>
           <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{tool.description}</p>
           <div className="flex flex-wrap gap-1 mb-1">
-            {tool.categories.slice(0, 2).map((category) => (
-              <Badge key={`category-${category}`} variant="secondary" className="text-xs">
-                {category}
+            {tool.tags.slice(0, 2).map((tag) => (
+              <Badge key={`tag-${tag}`} variant="outline" className="text-xs">
+                {tag}
               </Badge>
             ))}
           </div>

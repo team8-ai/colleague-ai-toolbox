@@ -1,21 +1,18 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getAllTools, getToolsByCategory, getToolsByTag, Tool } from '@/lib/tools';
+import { getAllTools, getToolsByTag, Tool } from '@/lib/tools';
 import ToolCard from '@/components/ToolCard';
-import CategoryFilter from '@/components/CategoryFilter';
 import TagFilter from '@/components/TagFilter';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2 } from 'lucide-react';
 
 const HomePage: React.FC = () => {
-  const { category, tag } = useParams<{ category?: string; tag?: string }>();
+  const { tag } = useParams<{ tag?: string }>();
   const [tools, setTools] = useState<Tool[]>([]);
   const [filteredTools, setFilteredTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(category || null);
   const [selectedTag, setSelectedTag] = useState<string | null>(tag || null);
 
   useEffect(() => {
@@ -24,14 +21,9 @@ const HomePage: React.FC = () => {
       try {
         let fetchedTools: Tool[];
 
-        if (category) {
-          fetchedTools = await getToolsByCategory(category);
-          setSelectedCategory(category);
-          setSelectedTag(null);
-        } else if (tag) {
+        if (tag) {
           fetchedTools = await getToolsByTag(tag);
           setSelectedTag(tag);
-          setSelectedCategory(null);
         } else {
           fetchedTools = await getAllTools();
         }
@@ -46,7 +38,7 @@ const HomePage: React.FC = () => {
     };
 
     fetchTools();
-  }, [category, tag]);
+  }, [tag]);
 
   useEffect(() => {
     // Filter tools by search query
@@ -58,30 +50,21 @@ const HomePage: React.FC = () => {
         (tool) =>
           tool.name.toLowerCase().includes(query) ||
           tool.description.toLowerCase().includes(query) ||
-          tool.categories.some((cat) => cat.toLowerCase().includes(query)) ||
           tool.tags.some((t) => t.toLowerCase().includes(query))
       );
       setFilteredTools(filtered);
     }
   }, [searchQuery, tools]);
 
-  const handleCategoryChange = (category: string | null) => {
-    setSelectedCategory(category);
-    setSelectedTag(null);
-  };
-
   const handleTagChange = (tag: string | null) => {
     setSelectedTag(tag);
-    setSelectedCategory(null);
   };
 
   const handleToolLike = async () => {
     // Refresh tools after a like
     try {
       let updatedTools: Tool[];
-      if (selectedCategory) {
-        updatedTools = await getToolsByCategory(selectedCategory);
-      } else if (selectedTag) {
+      if (selectedTag) {
         updatedTools = await getToolsByTag(selectedTag);
       } else {
         updatedTools = await getAllTools();
@@ -98,10 +81,6 @@ const HomePage: React.FC = () => {
         {/* Filters sidebar */}
         <div className="w-full md:w-64 space-y-6">
           <div className="space-y-4">
-            <CategoryFilter
-              selectedCategory={selectedCategory}
-              onChange={handleCategoryChange}
-            />
             <TagFilter
               selectedTag={selectedTag}
               onChange={handleTagChange}
@@ -113,14 +92,12 @@ const HomePage: React.FC = () => {
         <div className="flex-1">
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-4">
-              {selectedCategory ? `${selectedCategory} Tools` : 
-               selectedTag ? `Tools tagged with "${selectedTag}"` : 
-               'All AI Tools'}
+               {selectedTag ? `Tools tagged with "${selectedTag}"` : 'All AI Tools'}
             </h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Search tools by name, description, category, or tag"
+                placeholder="Search tools by name, description, or tag"
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -41,12 +40,16 @@ const Header: React.FC = () => {
           <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
             Home
           </Link>
-          <Link to="/categories" className="text-sm font-medium transition-colors hover:text-primary">
-            Categories
+          <Link to="/news" className="text-sm font-medium transition-colors hover:text-primary">
+            News
           </Link>
-          <Link to="/tags" className="text-sm font-medium transition-colors hover:text-primary">
-            Tags
+          <Link to="/events" className="text-sm font-medium transition-colors hover:text-primary">
+            Events
           </Link>
+          <Link to="/podcasts" className="text-sm font-medium transition-colors hover:text-primary">
+            Podcasts
+          </Link>
+
         </nav>
 
         <div className="flex items-center gap-4">

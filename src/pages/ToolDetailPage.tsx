@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -179,15 +178,6 @@ const ToolDetailPage: React.FC = () => {
           </div>
 
           <div className="rounded-lg border p-4">
-            <h3 className="font-semibold mb-2">Categories</h3>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {tool.categories.map((category) => (
-                <Badge key={`category-${category}`} variant="secondary">
-                  {category}
-                </Badge>
-              ))}
-            </div>
-
             <h3 className="font-semibold mb-2">Tags</h3>
             <div className="flex flex-wrap gap-1">
               {tool.tags.map((tag) => (

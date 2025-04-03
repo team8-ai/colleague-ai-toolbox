@@ -1,4 +1,3 @@
-
 import { createTimestamp, Timestamp } from './types';
 import { Tool, Comment } from './tools';
 
@@ -45,7 +44,6 @@ export const mockTools: Tool[] = [
     description: 'Advanced AI language model that can have natural conversations and assist with various tasks.',
     imageUrl: 'https://i.imgur.com/hepj9ZS.png',
     url: 'https://chat.openai.com/',
-    categories: ['AI Chatbots', 'Writing Assistant'],
     tags: ['AI', 'NLP', 'Assistant', 'Text Generation'],
     likes: ['user1', 'user2', 'user3'],
     likesCount: 3,
@@ -58,7 +56,6 @@ export const mockTools: Tool[] = [
     description: 'An AI system that creates realistic images and art from natural language descriptions.',
     imageUrl: 'https://i.imgur.com/Ld5F2K3.png',
     url: 'https://openai.com/dall-e-2/',
-    categories: ['Image Generation', 'AI Art'],
     tags: ['AI', 'Art', 'Image Generation'],
     likes: ['user2', 'user3'],
     likesCount: 2,
@@ -71,7 +68,6 @@ export const mockTools: Tool[] = [
     description: 'AI art generator that creates stunning images from text prompts.',
     imageUrl: 'https://i.imgur.com/8BfrqUr.jpg',
     url: 'https://www.midjourney.com/',
-    categories: ['Image Generation', 'AI Art'],
     tags: ['AI', 'Art', 'Design', 'Creative'],
     likes: ['user1'],
     likesCount: 1,
@@ -84,7 +80,6 @@ export const mockTools: Tool[] = [
     description: 'AI pair programming tool that helps you write code faster with suggestions based on comments and context.',
     imageUrl: 'https://i.imgur.com/jcfr5gn.png',
     url: 'https://github.com/features/copilot',
-    categories: ['Development', 'Coding Assistant'],
     tags: ['AI', 'Coding', 'Productivity', 'Developer Tools'],
     likes: ['user1', 'user2', 'user3', 'user4'],
     likesCount: 4,
@@ -97,7 +92,6 @@ export const mockTools: Tool[] = [
     description: 'AI writing assistant integrated into Notion to help with drafting, editing, and summarizing content.',
     imageUrl: 'https://i.imgur.com/MCXrrF3.png',
     url: 'https://www.notion.so/product/ai',
-    categories: ['Writing Assistant', 'Productivity'],
     tags: ['AI', 'Writing', 'Note-taking', 'Organization'],
     likes: ['user2'],
     likesCount: 1,
@@ -110,7 +104,6 @@ export const mockTools: Tool[] = [
     description: 'AI content generation platform for marketers and content creators.',
     imageUrl: 'https://i.imgur.com/pscyjPa.png',
     url: 'https://www.jasper.ai/',
-    categories: ['Content Creation', 'Writing Assistant'],
     tags: ['AI', 'Marketing', 'Content', 'Writing'],
     likes: [],
     likesCount: 0,
@@ -165,8 +158,7 @@ export const mockComments: Comment[] = [
   },
 ];
 
-// Mock categories and tags
-export const mockCategories = Array.from(new Set(mockTools.flatMap(tool => tool.categories)));
+// Mock tags
 export const mockTags = Array.from(new Set(mockTools.flatMap(tool => tool.tags)));
 
 // Helper function to simulate network delay
@@ -183,11 +175,6 @@ export const mockDataService = {
   getToolById: async (id: string) => {
     await delay(500);
     return mockTools.find(tool => tool.id === id) || null;
-  },
-  
-  getToolsByCategory: async (category: string) => {
-    await delay(600);
-    return mockTools.filter(tool => tool.categories.includes(category));
   },
   
   getToolsByTag: async (tag: string) => {
@@ -234,12 +221,7 @@ export const mockDataService = {
     return tool;
   },
   
-  // Categories and Tags
-  getAllCategories: async () => {
-    await delay(300);
-    return mockCategories;
-  },
-  
+  // Tags
   getAllTags: async () => {
     await delay(300);
     return mockTags;
