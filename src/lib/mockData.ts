@@ -86,6 +86,18 @@ export const mockTools: Tool[] = [
     createdAt: createRecentTimestamp(3),
     createdBy: mockUsers[2],
   },
+  {
+    id: 'tool-agno',
+    name: 'Agno',
+    description: 'A lightning-fast, lightweight library for building Multimodal Agents. Create AI agents that can generate text, image, audio and video, with built-in memory, knowledge, tools and reasoning capabilities. 10,000x faster than LangGraph and model-agnostic.',
+    imageUrl: 'https://cdn.prod.website-files.com/6796d350b8c706e4533e7e32/6796d350b8c706e4533e8011_Agno%20Logo.png',
+    url: 'https://www.agno.com/',
+    tags: ['AI', 'Multimodal', 'Agents', 'Vector DB', 'Open Source'],
+    likes: ['user1', 'user2', 'user3'],
+    likesCount: 3,
+    createdAt: createRecentTimestamp(1),
+    createdBy: mockUsers[3],
+  },
 ];
 
 // Mock comments data
