@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
         <div className="flex-1">
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-4">
-               {selectedTag ? `Tools tagged with "${selectedTag}"` : 'All AI Tools'}
+               {selectedTag ? `Tools tagged with "${selectedTag}"` : 'Tools'}
             </h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />

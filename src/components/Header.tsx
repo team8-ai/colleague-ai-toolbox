@@ -31,9 +31,9 @@ const Header: React.FC = () => {
       <div className="container flex h-16 items-center justify-between py-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold">AI</span>
+            <span className="text-primary-foreground font-bold">Ai8</span>
           </div>
-          <span className="text-xl font-bold">AI Tool Hub</span>
+          <span className="text-xl font-bold">Team8 AI Hub</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
