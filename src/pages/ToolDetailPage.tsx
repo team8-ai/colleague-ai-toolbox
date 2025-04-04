@@ -50,7 +50,12 @@ const ToolDetailPage: React.FC = () => {
     fetchTool();
   }, [id, navigate]);
 
-  const isLiked = user && tool?.likes?.includes(user.uid);
+  // We changed tool.likes to be a number (count) based on backend response.
+  // The .includes() method doesn't exist on numbers.
+  // We cannot determine if the *current* user liked the tool from this data alone.
+  // We set isLiked to false as a placeholder.
+  // Backend needs to be updated to provide user-specific like status for this page.
+  const isLiked = false; // Placeholder - Was: user && tool?.likes?.includes(user.uid);
 
   const handleLike = async () => {
     if (!user) {
@@ -138,9 +143,9 @@ const ToolDetailPage: React.FC = () => {
         <div className="space-y-6">
           <div className="rounded-lg border overflow-hidden">
             <div className="aspect-video bg-muted">
-              {tool.imageUrl ? (
+              {tool.image_url ? (
                 <img
-                  src={tool.imageUrl}
+                  src={tool.image_url}
                   alt={tool.name}
                   className="w-full h-full object-cover"
                 />
@@ -154,7 +159,7 @@ const ToolDetailPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {tool.likesCount || 0} {tool.likesCount === 1 ? 'like' : 'likes'}
+                    {tool.likes || 0} {tool.likes === 1 ? 'like' : 'likes'}
                   </p>
                 </div>
                 <Button

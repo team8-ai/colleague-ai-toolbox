@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { addComment, getCommentsByToolId, Comment } from '@/lib/tools';
@@ -134,16 +133,19 @@ const CommentSection: React.FC<CommentSectionProps> = ({ toolId }) => {
             <div key={comment.id} className="border-b border-border pb-4">
               <div className="flex items-start gap-4">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={comment.createdBy.photoURL || undefined} alt={comment.createdBy.displayName} />
-                  <AvatarFallback>{getInitials(comment.createdBy.displayName)}</AvatarFallback>
+                  <AvatarImage 
+                    src={comment.createdBy?.photoURL || undefined} 
+                    alt={comment.createdBy?.displayName || "User"} 
+                  />
+                  <AvatarFallback>{getInitials(comment.createdBy?.displayName)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-semibold">{comment.createdBy.displayName}</p>
+                      <p className="font-semibold">{comment.createdBy?.displayName || "Unknown User"}</p>
                       <p className="text-sm text-muted-foreground">
                         {comment.createdAt && 
-                          formatDistanceToNow(new Date(comment.createdAt.toDate()), { addSuffix: true })
+                          formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })
                         }
                       </p>
                     </div>

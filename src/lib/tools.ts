@@ -15,7 +15,7 @@ export interface Comment {
   id: string;
   toolId: string;
   text: string;
-  createdAt: Timestamp;
+  createdAt: string;
   createdBy: {
     uid: string;
     displayName: string;
