@@ -15,7 +15,12 @@ interface ToolCardProps {
 
 const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
   const { user } = useAuth();
-  const isLiked = user && tool.likes?.includes(user.uid);
+  
+  // Note: The backend currently doesn't provide information on *who* liked a tool,
+  // only the count. So, we cannot display a specific "liked" state per user yet.
+  // We'll assume isLiked is false for now, but keep the handleLike functionality.
+  // You might need to adjust the backend to return user-specific like status.
+  const isLiked = false; // Placeholder - update if backend changes
 
   const handleLike = async () => {
     if (!user) {
@@ -62,9 +67,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
       <CardContent className="flex-grow pt-0">
         <Link to={`/tool/${tool.id}`} className="block mb-3">
           <div className="aspect-video rounded-md overflow-hidden bg-muted relative group">
-            {tool.imageUrl ? (
+            {tool.image_url ? (
               <img 
-                src={tool.imageUrl} 
+                src={tool.image_url}
                 alt={tool.name} 
                 className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
               />
@@ -86,9 +91,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
       </CardContent>
       <CardFooter className="pt-3 flex justify-between items-center">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <Heart className={`h-3 w-3 ${tool.likesCount > 0 ? 'text-red-500/80 fill-current' : ''}`} />
+          <Heart className={`h-3 w-3 ${tool.likes > 0 ? 'text-red-500/80 fill-current' : ''}`} />
           <span>
-            {tool.likesCount || 0} {tool.likesCount === 1 ? 'like' : 'likes'}
+            {tool.likes || 0} {tool.likes === 1 ? 'like' : 'likes'}
           </span>
         </div>
         <Button asChild variant="outline" size="sm" className="text-xs h-7 px-2">

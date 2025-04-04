@@ -37,68 +37,68 @@ export const mockUsers = [
 ];
 
 // Mock tool data
-export const mockTools: Tool[] = [
-  {
-    id: 'tool-litllm',
-    name: 'LitLLM',
-    description: 'A powerful AI toolkit that transforms how researchers write literature reviews, using advanced Retrieval-Augmented Generation (RAG) to create accurate, well-structured related work sections in seconds rather than days.',
-    imageUrl: 'https://litllm.github.io/static/images/litllm.png',
-    url: 'https://litllm.github.io/',
-    tags: ['AI', 'Research', 'Literature Review', 'Academic', 'RAG'],
-    likes: ['user1', 'user2'],
-    likesCount: 2,
-    createdAt: createRecentTimestamp(5),
-    createdBy: mockUsers[0],
-  },
-  {
-    id: 'simular',
-    name: 'Agent S2',
-    description: 'An open, modular, and scalable framework for computer-use agents that can observe, reason, and perform tasks by directly interacting with graphical user interfaces. These autonomous AI agents function as intelligent intermediaries between human users and their digital tools.',
-    imageUrl: 'https://github.com/simular-ai/Agent-S/raw/main/images/agent_s2_teaser.png',
-    url: 'https://www.simular.ai/',
-    tags: ['AI', 'Automation', 'Computer Use', 'Framework'],
-    likes: ['user2', 'user3'],
-    likesCount: 2,
-    createdAt: createRecentTimestamp(45),
-    createdBy: mockUsers[1],
-  },
-  {
-    id: 'tool-builder',
-    name: 'Builder.io',
-    description: 'AI-powered visual development platform that accelerates digital teams with design-to-code conversion, visual editing, and enterprise CMS capabilities. Turn Figma designs into production-ready code and enable marketers to build pages without engineering.',
-    imageUrl: 'https://camo.githubusercontent.com/f4fd0404b33a2a3189702359b45ce2297972d63235e158bf18670bb539b84be8/68747470733a2f2f63646e2e6275696c6465722e696f2f6170692f76312f696d6167652f617373657473253246594a494762346930316a7677305352644c3542742532463936666139366637663561303431356639646666343062343164373862366137',
-    url: 'https://www.builder.io/',
-    tags: ['AI', 'Visual Development', 'Design to Code', 'CMS', 'Headless'],
-    likes: ['user1', 'user3', 'user4'],
-    likesCount: 3,
-    createdAt: createRecentTimestamp(2),
-    createdBy: mockUsers[1],
-  },
-  {
-    id: 'tool-mermaid',
-    name: 'Mermaid Chart',
-    description: 'A collaborative diagramming tool that lets you create and share diagrams using text and code. Create flowcharts, sequence diagrams, Gantt charts, and more using Mermaid\'s simple markdown-like syntax.',
-    imageUrl: 'https://static.mermaidchart.dev/assets/logo-mermaid.svg',
-    url: 'https://www.mermaidchart.com/',
-    tags: ['Diagramming', 'Documentation', 'Developer Tools', 'Markdown', 'Collaboration'],
-    likes: ['user2', 'user4'],
-    likesCount: 2,
-    createdAt: createRecentTimestamp(3),
-    createdBy: mockUsers[2],
-  },
-  {
-    id: 'tool-agno',
-    name: 'Agno',
-    description: 'A lightning-fast, lightweight library for building Multimodal Agents. Create AI agents that can generate text, image, audio and video, with built-in memory, knowledge, tools and reasoning capabilities. 10,000x faster than LangGraph and model-agnostic.',
-    imageUrl: 'https://cdn.prod.website-files.com/6796d350b8c706e4533e7e32/6796d350b8c706e4533e8011_Agno%20Logo.png',
-    url: 'https://www.agno.com/',
-    tags: ['AI', 'Multimodal', 'Agents', 'Vector DB', 'Open Source'],
-    likes: ['user1', 'user2', 'user3'],
-    likesCount: 3,
-    createdAt: createRecentTimestamp(1),
-    createdBy: mockUsers[3],
-  },
-];
+// export const mockTools: Tool[] = [
+//   {
+//     id: 'tool-litllm',
+//     name: 'LitLLM',
+//     description: 'A powerful AI toolkit that transforms how researchers write literature reviews, using advanced Retrieval-Augmented Generation (RAG) to create accurate, well-structured related work sections in seconds rather than days.',
+//     imageUrl: 'https://litllm.github.io/static/images/litllm.png',
+//     url: 'https://litllm.github.io/',
+//     tags: ['AI', 'Research', 'Literature Review', 'Academic', 'RAG'],
+//     likes: ['user1', 'user2'],
+//     likesCount: 2,
+//     createdAt: createRecentTimestamp(5),
+//     createdBy: mockUsers[0],
+//   },
+//   {
+//     id: 'simular',
+//     name: 'Agent S2',
+//     description: 'An open, modular, and scalable framework for computer-use agents that can observe, reason, and perform tasks by directly interacting with graphical user interfaces. These autonomous AI agents function as intelligent intermediaries between human users and their digital tools.',
+//     imageUrl: 'https://github.com/simular-ai/Agent-S/raw/main/images/agent_s2_teaser.png',
+//     url: 'https://www.simular.ai/',
+//     tags: ['AI', 'Automation', 'Computer Use', 'Framework'],
+//     likes: ['user2', 'user3'],
+//     likesCount: 2,
+//     createdAt: createRecentTimestamp(45),
+//     createdBy: mockUsers[1],
+//   },
+//   {
+//     id: 'tool-builder',
+//     name: 'Builder.io',
+//     description: 'AI-powered visual development platform that accelerates digital teams with design-to-code conversion, visual editing, and enterprise CMS capabilities. Turn Figma designs into production-ready code and enable marketers to build pages without engineering.',
+//     imageUrl: 'https://camo.githubusercontent.com/f4fd0404b33a2a3189702359b45ce2297972d63235e158bf18670bb539b84be8/68747470733a2f2f63646e2e6275696c6465722e696f2f6170692f76312f696d6167652f617373657473253246594a494762346930316a7677305352644c3542742532463936666139366637663561303431356639646666343062343164373862366137',
+//     url: 'https://www.builder.io/',
+//     tags: ['AI', 'Visual Development', 'Design to Code', 'CMS', 'Headless'],
+//     likes: ['user1', 'user3', 'user4'],
+//     likesCount: 3,
+//     createdAt: createRecentTimestamp(2),
+//     createdBy: mockUsers[1],
+//   },
+//   {
+//     id: 'tool-mermaid',
+//     name: 'Mermaid Chart',
+//     description: 'A collaborative diagramming tool that lets you create and share diagrams using text and code. Create flowcharts, sequence diagrams, Gantt charts, and more using Mermaid\'s simple markdown-like syntax.',
+//     imageUrl: 'https://static.mermaidchart.dev/assets/logo-mermaid.svg',
+//     url: 'https://www.mermaidchart.com/',
+//     tags: ['Diagramming', 'Documentation', 'Developer Tools', 'Markdown', 'Collaboration'],
+//     likes: ['user2', 'user4'],
+//     likesCount: 2,
+//     createdAt: createRecentTimestamp(3),
+//     createdBy: mockUsers[2],
+//   },
+//   {
+//     id: 'tool-agno',
+//     name: 'Agno',
+//     description: 'A lightning-fast, lightweight library for building Multimodal Agents. Create AI agents that can generate text, image, audio and video, with built-in memory, knowledge, tools and reasoning capabilities. 10,000x faster than LangGraph and model-agnostic.',
+//     imageUrl: 'https://cdn.prod.website-files.com/6796d350b8c706e4533e7e32/6796d350b8c706e4533e8011_Agno%20Logo.png',
+//     url: 'https://www.agno.com/',
+//     tags: ['AI', 'Multimodal', 'Agents', 'Vector DB', 'Open Source'],
+//     likes: ['user1', 'user2', 'user3'],
+//     likesCount: 3,
+//     createdAt: createRecentTimestamp(1),
+//     createdBy: mockUsers[3],
+//   },
+// ];
 
 // Mock comments data
 export const mockComments: Comment[] = [
@@ -147,71 +147,71 @@ export const mockComments: Comment[] = [
 ];
 
 // Mock tags
-export const mockTags = Array.from(new Set(mockTools.flatMap(tool => tool.tags)));
+// export const mockTags = Array.from(new Set(mockTools.flatMap(tool => tool.tags)));
 
 // Helper function to simulate network delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Mock data service
-export const mockDataService = {
-  // Tools
-  getAllTools: async () => {
-    await delay(800); // Simulate network delay
-    return [...mockTools];
-  },
+// export const mockDataService = {
+//   // Tools
+//   getAllTools: async () => {
+//     await delay(800); // Simulate network delay
+//     return [...mockTools];
+//   },
   
-  getToolById: async (id: string) => {
-    await delay(500);
-    return mockTools.find(tool => tool.id === id) || null;
-  },
+//   getToolById: async (id: string) => {
+//     await delay(500);
+//     return mockTools.find(tool => tool.id === id) || null;
+//   },
   
-  getToolsByTag: async (tag: string) => {
-    await delay(600);
-    return mockTools.filter(tool => tool.tags.includes(tag));
-  },
+//   getToolsByTag: async (tag: string) => {
+//     await delay(600);
+//     return mockTools.filter(tool => tool.tags.includes(tag));
+//   },
   
-  // Comments
-  getCommentsByToolId: async (toolId: string) => {
-    await delay(700);
-    return mockComments.filter(comment => comment.toolId === toolId);
-  },
+//   // Comments
+//   getCommentsByToolId: async (toolId: string) => {
+//     await delay(700);
+//     return mockComments.filter(comment => comment.toolId === toolId);
+//   },
   
-  addComment: async (toolId: string, text: string) => {
-    await delay(500);
-    const newComment: Comment = {
-      id: `comment${mockComments.length + 1}`,
-      toolId,
-      text,
-      createdAt: createRecentTimestamp(0),
-      createdBy: mockUsers[0], // Assume current user is the first mock user
-    };
-    mockComments.push(newComment);
-    return newComment;
-  },
+//   addComment: async (toolId: string, text: string) => {
+//     await delay(500);
+//     const newComment: Comment = {
+//       id: `comment${mockComments.length + 1}`,
+//       toolId,
+//       text,
+//       createdAt: createRecentTimestamp(0),
+//       createdBy: mockUsers[0], // Assume current user is the first mock user
+//     };
+//     mockComments.push(newComment);
+//     return newComment;
+//   },
   
-  // Likes
-  toggleLikeTool: async (toolId: string) => {
-    await delay(500);
-    const tool = mockTools.find(t => t.id === toolId);
-    if (!tool) throw new Error('Tool not found');
+//   // Likes
+//   toggleLikeTool: async (toolId: string) => {
+//     await delay(500);
+//     const tool = mockTools.find(t => t.id === toolId);
+//     if (!tool) throw new Error('Tool not found');
     
-    const currentUserId = 'user1'; // Assume current user is the first mock user
+//     const currentUserId = 'user1'; // Assume current user is the first mock user
     
-    // Toggle like
-    if (tool.likes.includes(currentUserId)) {
-      tool.likes = tool.likes.filter(id => id !== currentUserId);
-      tool.likesCount--;
-    } else {
-      tool.likes.push(currentUserId);
-      tool.likesCount++;
-    }
+//     // Toggle like
+//     if (tool.likes.includes(currentUserId)) {
+//       tool.likes = tool.likes.filter(id => id !== currentUserId);
+//       tool.likesCount--;
+//     } else {
+//       tool.likes.push(currentUserId);
+//       tool.likesCount++;
+//     }
     
-    return tool;
-  },
+//     return tool;
+//   },
   
-  // Tags
-  getAllTags: async () => {
-    await delay(300);
-    return mockTags;
-  },
-};
+//   // Tags
+//   getAllTags: async () => {
+//     await delay(300);
+//     return mockTags;
+//   },
+// };

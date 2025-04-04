@@ -18,6 +18,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchTools = async () => {
       setLoading(true);
+      console.log(`Fetching tools... Tag: ${selectedTag}`);
       try {
         let fetchedTools: Tool[];
 
@@ -27,6 +28,7 @@ const HomePage: React.FC = () => {
           fetchedTools = await getAllTools();
         }
 
+        console.log("Fetched tools:", fetchedTools);
         setTools(fetchedTools);
         setFilteredTools(fetchedTools);
       } catch (error) {
@@ -44,28 +46,26 @@ const HomePage: React.FC = () => {
   }, [tag]);
 
   useEffect(() => {
-    if (searchQuery.trim() === '') {
-      if (selectedTag) {
-        const tagFiltered = tools.filter(tool => tool.tags.includes(selectedTag));
-        setFilteredTools(tagFiltered);
-      } else {
+    console.log("Filtering effect running. Search:", searchQuery, "Tag:", selectedTag, "Tools:", tools);
+    if (searchQuery.trim() === '' && !selectedTag) {
+        console.log("Setting filteredTools to all tools", tools);
         setFilteredTools(tools);
-      }
     } else {
-      const query = searchQuery.toLowerCase().trim();
-      const baseFiltered = selectedTag
-        ? tools.filter(tool => tool.tags.includes(selectedTag))
-        : tools;
+        const query = searchQuery.toLowerCase().trim();
+        const baseFiltered = selectedTag
+            ? tools.filter(tool => tool.tags.includes(selectedTag))
+            : tools;
 
-      const searchFiltered = baseFiltered.filter(
-        (tool) =>
-          tool.name.toLowerCase().includes(query) ||
-          tool.description.toLowerCase().includes(query) ||
-          tool.tags.some((t) => t.toLowerCase().includes(query))
-      );
-      setFilteredTools(searchFiltered);
+        const searchFiltered = baseFiltered.filter(
+            (tool) =>
+                tool.name.toLowerCase().includes(query) ||
+                tool.description.toLowerCase().includes(query) ||
+                tool.tags.some((t) => t.toLowerCase().includes(query))
+        );
+        console.log("Setting filteredTools after search/tag:", searchFiltered);
+        setFilteredTools(searchFiltered);
     }
-  }, [searchQuery, tools, selectedTag]);
+}, [searchQuery, tools, selectedTag]);
 
   const handleTagChange = (tag: string | null) => {
     setSelectedTag(tag);
@@ -100,6 +100,8 @@ const HomePage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  console.log("Rendering HomePage. Loading:", loading, "Filtered Tools:", filteredTools);
 
   return (
     <div className="container py-8 px-4 md:px-6">

@@ -13,9 +13,3 @@ export const FEATURES = {
   enableLikes: true,
   enableSharing: false,
 };
-
-// Development mode settings
-export const DEV_CONFIG = {
-  bypassAuth: true,
-  mockData: true,
-};
