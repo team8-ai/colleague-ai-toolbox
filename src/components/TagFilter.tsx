@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllTags } from '@/lib/tools';
@@ -53,23 +52,27 @@ const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange }) => {
   };
 
   return (
-    <div className="p-4 border rounded-md w-full">
-      <h2 className="text-lg font-semibold mb-3">Popular Tags</h2>
-      <ScrollArea className="w-full">
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <Badge
-              key={tag}
-              variant={selectedTag === tag ? "default" : "secondary"}
-              className="cursor-pointer"
-              onClick={() => handleTagClick(tag)}
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </ScrollArea>
-    </div>
+    <ScrollArea className="w-full h-48">
+      <div className="flex flex-wrap gap-2 pr-4">
+        <Badge
+          variant={selectedTag === null ? "default" : "secondary"}
+          className="cursor-pointer transition-colors hover:bg-primary/10"
+          onClick={() => handleTagClick(null)}
+        >
+           All Tools
+        </Badge>
+        {tags.map((tag) => (
+          <Badge
+            key={tag}
+            variant={selectedTag === tag ? "default" : "secondary"}
+            className="cursor-pointer transition-colors hover:bg-primary/10"
+            onClick={() => handleTagClick(tag)}
+          >
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    </ScrollArea>
   );
 };
 

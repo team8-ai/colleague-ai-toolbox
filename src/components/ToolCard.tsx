@@ -41,54 +41,57 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
   };
 
   return (
-    <Card className="overflow-hidden h-full flex flex-col transition-all hover:shadow-md">
+    <Card className="overflow-hidden h-full flex flex-col transition-all hover:shadow-lg border-transparent hover:border-primary/20 bg-background/60 backdrop-blur-sm">
       <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-xl line-clamp-1">{tool.name}</CardTitle>
+        <div className="flex justify-between items-start">
+          <Link to={`/tool/${tool.id}`} className="flex-grow mr-2">
+            <CardTitle className="text-lg font-semibold line-clamp-1 hover:text-primary transition-colors">
+              {tool.name}
+            </CardTitle>
+          </Link>
           <Button 
             variant="ghost" 
             size="icon" 
-            className={`${isLiked ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-red-400'}`}
-            onClick={handleLike}
+            className={`flex-shrink-0 h-8 w-8 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground/70 hover:text-red-400 hover:bg-red-500/10'}`}
+            onClick={(e) => { e.preventDefault(); handleLike(); }}
           >
-            <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
+            <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow">
-        <div>
-          <Link to={`/tool/${tool.id}`}>
-            <div className="aspect-video mb-3 rounded-md overflow-hidden bg-muted relative">
-              {tool.imageUrl ? (
-                <img 
-                  src={tool.imageUrl} 
-                  alt={tool.name} 
-                  className="object-cover w-full h-full transition-all hover:scale-105"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-secondary text-secondary-foreground">
-                  {tool.name.substring(0, 2).toUpperCase()}
-                </div>
-              )}
-            </div>
-          </Link>
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{tool.description}</p>
-          <div className="flex flex-wrap gap-1 mb-1">
-            {tool.tags.slice(0, 2).map((tag) => (
-              <Badge key={`tag-${tag}`} variant="outline" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
+      <CardContent className="flex-grow pt-0">
+        <Link to={`/tool/${tool.id}`} className="block mb-3">
+          <div className="aspect-video rounded-md overflow-hidden bg-muted relative group">
+            {tool.imageUrl ? (
+              <img 
+                src={tool.imageUrl} 
+                alt={tool.name} 
+                className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-secondary text-secondary-foreground">
+                <span className="text-2xl font-semibold">{tool.name.substring(0, 2).toUpperCase()}</span>
+              </div>
+            )}
           </div>
+        </Link>
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{tool.description}</p>
+        <div className="flex flex-wrap gap-1">
+          {tool.tags.slice(0, 3).map((tag) => (
+            <Badge key={`tag-${tag}`} variant="secondary" className="text-xs font-normal">
+              {tag}
+            </Badge>
+          ))}
         </div>
       </CardContent>
-      <CardFooter className="pt-0 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">
+      <CardFooter className="pt-3 flex justify-between items-center">
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <Heart className={`h-3 w-3 ${tool.likesCount > 0 ? 'text-red-500/80 fill-current' : ''}`} />
+          <span>
             {tool.likesCount || 0} {tool.likesCount === 1 ? 'like' : 'likes'}
           </span>
         </div>
-        <Button asChild variant="outline" size="sm">
+        <Button asChild variant="outline" size="sm" className="text-xs h-7 px-2">
           <Link to={`/tool/${tool.id}`}>View details</Link>
         </Button>
       </CardFooter>
