@@ -1,20 +1,24 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 
 const LoginPage: React.FC = () => {
-  const { user, loading, bypassAuth } = useAuth();
+  const { user, loading, loginWithEmail } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   // If the user is already logged in, redirect to home
   if (user) {
     return <Navigate to="/" replace />;
   }
 
-  const handleBypass = () => {
-    bypassAuth();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await loginWithEmail(email, password);
   };
 
   return (
@@ -26,13 +30,38 @@ const LoginPage: React.FC = () => {
           </div>
           <h1 className="mt-4 text-2xl font-bold">AI Tool Hub</h1>
           <p className="mt-2 text-muted-foreground">
-            Development version - No authentication required
+            Sign in to your account
           </p>
         </div>
 
-        <div className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your.email@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
           <Button
-            onClick={handleBypass}
+            type="submit"
             disabled={loading}
             className="w-full flex items-center justify-center gap-2"
           >
@@ -42,12 +71,10 @@ const LoginPage: React.FC = () => {
                 Signing in...
               </>
             ) : (
-              <>
-                Enter AI Tool Hub (Dev Mode)
-              </>
+              "Sign in"
             )}
           </Button>
-        </div>
+        </form>
       </div>
     </div>
   );
