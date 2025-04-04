@@ -7,6 +7,14 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2 } from 'lucide-react';
 
+const CACHE_KEY_PREFIX = 'toolCache_';
+const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+
+interface CachedData {
+  timestamp: number;
+  tools: Tool[];
+}
+
 const HomePage: React.FC = () => {
   const { tag } = useParams<{ tag?: string }>();
   const [tools, setTools] = useState<Tool[]>([]);
@@ -18,28 +26,65 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchTools = async () => {
       setLoading(true);
-      console.log(`Fetching tools... Tag: ${selectedTag}`);
+      const cacheKey = `${CACHE_KEY_PREFIX}${selectedTag || 'all'}`;
+      console.log(`Fetching tools... Tag: ${selectedTag}, Cache Key: ${cacheKey}`);
+
+      // 1. Check cache
+      try {
+        const cachedItem = localStorage.getItem(cacheKey);
+        if (cachedItem) {
+          const { timestamp, tools: cachedTools } = JSON.parse(cachedItem) as CachedData;
+          const now = Date.now();
+          if (now - timestamp < CACHE_DURATION_MS) {
+            console.log("Using cached tools:", cachedTools);
+            setTools(cachedTools);
+            setFilteredTools(cachedTools); // Apply initial filter based on cached data
+            setLoading(false);
+            // Optional: Fetch in background to update cache without showing loader
+            // fetchFreshDataAndUpdateCache(selectedTag, cacheKey);
+            return; // Exit early, used cached data
+          } else {
+            console.log("Cache expired");
+            localStorage.removeItem(cacheKey); // Remove expired item
+          }
+        }
+      } catch (error) {
+        console.error("Error reading from cache:", error);
+        localStorage.removeItem(cacheKey); // Clear potentially corrupted cache item
+      }
+
+      // 2. Fetch from network if cache miss or expired
+      console.log("Fetching from network...");
       try {
         let fetchedTools: Tool[];
-
         if (selectedTag) {
           fetchedTools = await getToolsByTag(selectedTag);
         } else {
           fetchedTools = await getAllTools();
         }
-
-        console.log("Fetched tools:", fetchedTools);
+        console.log("Fetched tools from network:", fetchedTools);
         setTools(fetchedTools);
-        setFilteredTools(fetchedTools);
+        setFilteredTools(fetchedTools); // Apply initial filter based on fetched data
+
+        // 3. Store in cache
+        const dataToCache: CachedData = { timestamp: Date.now(), tools: fetchedTools };
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
+          console.log("Stored fetched tools in cache.");
+        } catch (cacheError) {
+          console.error("Error writing to cache:", cacheError);
+        }
+
       } catch (error) {
         console.error("Error fetching tools:", error);
+        // Consider setting an error state here
       } finally {
         setLoading(false);
       }
     };
 
     fetchTools();
-  }, [selectedTag]);
+  }, [selectedTag]); // Keep dependency only on selectedTag for fetching logic
 
   useEffect(() => {
     setSelectedTag(tag || null);
@@ -65,7 +110,7 @@ const HomePage: React.FC = () => {
         console.log("Setting filteredTools after search/tag:", searchFiltered);
         setFilteredTools(searchFiltered);
     }
-}, [searchQuery, tools, selectedTag]);
+}, [searchQuery, tools, selectedTag]); // Keep dependencies for filtering logic
 
   const handleTagChange = (tag: string | null) => {
     setSelectedTag(tag);
@@ -73,7 +118,13 @@ const HomePage: React.FC = () => {
   };
 
   const handleToolLike = async () => {
-    setLoading(true);
+    // We could invalidate cache here, but for simplicity,
+    // let's rely on the time-based expiry or the user refreshing.
+    // A more robust solution might clear the specific cache key
+    // or re-fetch and update the cache immediately after liking.
+    // localStorage.removeItem(`${CACHE_KEY_PREFIX}${selectedTag || 'all'}`);
+
+    setLoading(true); // Show loading maybe? Or handle update more smoothly
     try {
       let updatedTools: Tool[];
       if (selectedTag) {
@@ -94,6 +145,17 @@ const HomePage: React.FC = () => {
       } else {
         setFilteredTools(updatedTools);
       }
+
+      // Optionally update cache after like
+      const cacheKey = `${CACHE_KEY_PREFIX}${selectedTag || 'all'}`;
+      const dataToCache: CachedData = { timestamp: Date.now(), tools: updatedTools };
+      try {
+          localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
+          console.log("Updated cache after like.");
+      } catch (cacheError) {
+          console.error("Error writing to cache after like:", cacheError);
+      }
+
     } catch (error) {
       console.error("Error refreshing tools after like:", error);
     } finally {
@@ -119,6 +181,7 @@ const HomePage: React.FC = () => {
             className="pl-10 h-12 rounded-full shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search tools" // Added for accessibility
           />
         </div>
       </div>
@@ -130,6 +193,7 @@ const HomePage: React.FC = () => {
             <TagFilter
               selectedTag={selectedTag}
               onChange={handleTagChange}
+              // Consider fetching tags dynamically if they change often
             />
           </div>
         </div>
@@ -156,7 +220,7 @@ const HomePage: React.FC = () => {
                 <Search className="h-8 w-8 text-primary" />
               </div>
               <p className="text-xl font-medium text-foreground mb-1">No tools found</p>
-              <p className="text-sm text-muted-foreground text-center">
+              <p className="text-sm text-muted-foreground text-center max-w-xs"> {/* Added max-width */}
                 {searchQuery ? 'Try refining your search or ' : ''}
                 {selectedTag ? `clear the "${selectedTag}" tag filter.` : 'Try searching or selecting a tag.'}
               </p>
