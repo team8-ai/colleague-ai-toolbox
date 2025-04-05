@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAllTools, getToolsByTag, Tool } from '@/lib/tools';
 import ToolCard from '@/components/ToolCard';
@@ -6,111 +6,58 @@ import TagFilter from '@/components/TagFilter';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2 } from 'lucide-react';
+import useSWR, { mutate } from 'swr';
 
-const CACHE_KEY_PREFIX = 'toolCache_';
-const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
-
-interface CachedData {
-  timestamp: number;
-  tools: Tool[];
-}
+// Define a fetcher function for SWR
+// The key will be an array like ['tools', tag] or ['tools', null]
+const fetcher = async ([_, tag]: [string, string | null]): Promise<Tool[]> => {
+  console.log(`SWR Fetcher called. Key: ['tools', ${tag}]`);
+  if (tag) {
+    return getToolsByTag(tag);
+  }
+  return getAllTools();
+};
 
 const HomePage: React.FC = () => {
-  const { tag } = useParams<{ tag?: string }>();
-  const [tools, setTools] = useState<Tool[]>([]);
-  const [filteredTools, setFilteredTools] = useState<Tool[]>([]);
+  const { tag: routeTag } = useParams<{ tag?: string }>();
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [selectedTag, setSelectedTag] = useState<string | null>(tag || null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(routeTag || null);
 
   useEffect(() => {
-    const fetchTools = async () => {
-      setLoading(true);
-      const cacheKey = `${CACHE_KEY_PREFIX}${selectedTag || 'all'}`;
-      console.log(`Fetching tools... Tag: ${selectedTag}, Cache Key: ${cacheKey}`);
+    setSelectedTag(routeTag || null);
+  }, [routeTag]);
 
-      // 1. Check cache
-      try {
-        const cachedItem = localStorage.getItem(cacheKey);
-        if (cachedItem) {
-          const { timestamp, tools: cachedTools } = JSON.parse(cachedItem) as CachedData;
-          const now = Date.now();
-          if (now - timestamp < CACHE_DURATION_MS) {
-            console.log("Using cached tools:", cachedTools);
-            setTools(cachedTools);
-            setFilteredTools(cachedTools); // Apply initial filter based on cached data
-            setLoading(false);
-            // Optional: Fetch in background to update cache without showing loader
-            // fetchFreshDataAndUpdateCache(selectedTag, cacheKey);
-            return; // Exit early, used cached data
-          } else {
-            console.log("Cache expired");
-            localStorage.removeItem(cacheKey); // Remove expired item
-          }
-        }
-      } catch (error) {
-        console.error("Error reading from cache:", error);
-        localStorage.removeItem(cacheKey); // Clear potentially corrupted cache item
-      }
-
-      // 2. Fetch from network if cache miss or expired
-      console.log("Fetching from network...");
-      try {
-        let fetchedTools: Tool[];
-        if (selectedTag) {
-          fetchedTools = await getToolsByTag(selectedTag);
-        } else {
-          fetchedTools = await getAllTools();
-        }
-        console.log("Fetched tools from network:", fetchedTools);
-        setTools(fetchedTools);
-        setFilteredTools(fetchedTools); // Apply initial filter based on fetched data
-
-        // 3. Store in cache
-        const dataToCache: CachedData = { timestamp: Date.now(), tools: fetchedTools };
-        try {
-          localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
-          console.log("Stored fetched tools in cache.");
-        } catch (cacheError) {
-          console.error("Error writing to cache:", cacheError);
-        }
-
-      } catch (error) {
-        console.error("Error fetching tools:", error);
-        // Consider setting an error state here
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTools();
-  }, [selectedTag]); // Keep dependency only on selectedTag for fetching logic
-
-  useEffect(() => {
-    setSelectedTag(tag || null);
-  }, [tag]);
-
-  useEffect(() => {
-    console.log("Filtering effect running. Search:", searchQuery, "Tag:", selectedTag, "Tools:", tools);
-    if (searchQuery.trim() === '' && !selectedTag) {
-        console.log("Setting filteredTools to all tools", tools);
-        setFilteredTools(tools);
-    } else {
-        const query = searchQuery.toLowerCase().trim();
-        const baseFiltered = selectedTag
-            ? tools.filter(tool => tool.tags.includes(selectedTag))
-            : tools;
-
-        const searchFiltered = baseFiltered.filter(
-            (tool) =>
-                tool.name.toLowerCase().includes(query) ||
-                tool.description.toLowerCase().includes(query) ||
-                tool.tags.some((t) => t.toLowerCase().includes(query))
-        );
-        console.log("Setting filteredTools after search/tag:", searchFiltered);
-        setFilteredTools(searchFiltered);
+  // --- SWR Implementation ---
+  const swrKey = useMemo(() => ['tools', selectedTag], [selectedTag]);
+  const { data: tools, error, isLoading } = useSWR<Tool[], Error>(
+    swrKey, // Key depends on the selected tag
+    fetcher,
+    {
+      // Optional SWR configuration
+      // revalidateOnFocus: false, // Example: disable revalidation on window focus
+      // dedupingInterval: 2000, // Example: dedupe requests within 2 seconds
     }
-}, [searchQuery, tools, selectedTag]); // Keep dependencies for filtering logic
+  );
+
+  const filteredTools = useMemo(() => {
+    console.log("Filtering effect running. Search:", searchQuery, "Tag:", selectedTag, "Tools from SWR:", tools);
+    if (!tools) return []; // Handle initial undefined state from SWR
+
+    if (searchQuery.trim() === '') {
+      console.log("Setting filteredTools to SWR data", tools);
+      return tools; // Return all data fetched by SWR if no search query
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+    const searchFiltered = tools.filter(
+      (tool) =>
+        tool.name.toLowerCase().includes(query) ||
+        tool.description.toLowerCase().includes(query) ||
+        tool.tags.some((t) => t.toLowerCase().includes(query))
+    );
+    console.log("Setting filteredTools after search:", searchFiltered);
+    return searchFiltered;
+  }, [searchQuery, tools, selectedTag]);
 
   const handleTagChange = (tag: string | null) => {
     setSelectedTag(tag);
@@ -118,52 +65,16 @@ const HomePage: React.FC = () => {
   };
 
   const handleToolLike = async () => {
-    // We could invalidate cache here, but for simplicity,
-    // let's rely on the time-based expiry or the user refreshing.
-    // A more robust solution might clear the specific cache key
-    // or re-fetch and update the cache immediately after liking.
-    // localStorage.removeItem(`${CACHE_KEY_PREFIX}${selectedTag || 'all'}`);
-
-    setLoading(true); // Show loading maybe? Or handle update more smoothly
+    console.log("Tool liked, triggering SWR revalidation for key:", swrKey);
     try {
-      let updatedTools: Tool[];
-      if (selectedTag) {
-        updatedTools = await getToolsByTag(selectedTag);
-      } else {
-        updatedTools = await getAllTools();
-      }
-      setTools(updatedTools);
-      if (searchQuery.trim() !== '') {
-        const query = searchQuery.toLowerCase().trim();
-        const searchFiltered = updatedTools.filter(
-          (tool) =>
-            tool.name.toLowerCase().includes(query) ||
-            tool.description.toLowerCase().includes(query) ||
-            tool.tags.some((t) => t.toLowerCase().includes(query))
-        );
-        setFilteredTools(searchFiltered);
-      } else {
-        setFilteredTools(updatedTools);
-      }
-
-      // Optionally update cache after like
-      const cacheKey = `${CACHE_KEY_PREFIX}${selectedTag || 'all'}`;
-      const dataToCache: CachedData = { timestamp: Date.now(), tools: updatedTools };
-      try {
-          localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
-          console.log("Updated cache after like.");
-      } catch (cacheError) {
-          console.error("Error writing to cache after like:", cacheError);
-      }
-
+      await mutate(swrKey);
+      console.log("SWR revalidation triggered successfully after like.");
     } catch (error) {
-      console.error("Error refreshing tools after like:", error);
-    } finally {
-      setLoading(false);
+      console.error("Error during like or SWR revalidation:", error);
     }
   };
 
-  console.log("Rendering HomePage. Loading:", loading, "Filtered Tools:", filteredTools);
+  console.log("Rendering HomePage. SWR isLoading:", isLoading, "SWR Error:", error, "Filtered Tools:", filteredTools);
 
   return (
     <div className="container py-8 px-4 md:px-6">
@@ -181,7 +92,7 @@ const HomePage: React.FC = () => {
             className="pl-10 h-12 rounded-full shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label="Search tools" // Added for accessibility
+            aria-label="Search tools"
           />
         </div>
       </div>
@@ -193,13 +104,12 @@ const HomePage: React.FC = () => {
             <TagFilter
               selectedTag={selectedTag}
               onChange={handleTagChange}
-              // Consider fetching tags dynamically if they change often
             />
           </div>
         </div>
 
         <div className="flex-1">
-          {loading ? (
+          {isLoading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
                 <div
@@ -208,21 +118,31 @@ const HomePage: React.FC = () => {
                 />
               ))}
             </div>
-          ) : filteredTools.length > 0 ? (
+          )}
+          {error && (
+             <div className="flex flex-col items-center justify-center py-16 bg-destructive/10 rounded-xl border border-dashed border-destructive/50">
+                <p className="text-xl font-medium text-destructive mb-1">Error loading tools</p>
+                <p className="text-sm text-destructive/80 text-center max-w-xs">{error.message}</p>
+             </div>
+          )}
+          {!isLoading && !error && filteredTools.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredTools.map((tool) => (
                 <ToolCard key={tool.id} tool={tool} onLike={handleToolLike} />
               ))}
             </div>
-          ) : (
+          )}
+          {!isLoading && !error && filteredTools.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-xl border border-dashed">
               <div className="bg-primary/10 p-4 rounded-full mb-4">
                 <Search className="h-8 w-8 text-primary" />
               </div>
               <p className="text-xl font-medium text-foreground mb-1">No tools found</p>
-              <p className="text-sm text-muted-foreground text-center max-w-xs"> {/* Added max-width */}
-                {searchQuery ? 'Try refining your search or ' : ''}
-                {selectedTag ? `clear the "${selectedTag}" tag filter.` : 'Try searching or selecting a tag.'}
+              <p className="text-sm text-muted-foreground text-center max-w-xs">
+                 {searchQuery && tools && tools.length > 0 && 'Your search did not match any tools. '}
+                 {selectedTag && tools && tools.length === 0 && `No tools found for the tag "${selectedTag}". `}
+                 {!selectedTag && tools && tools.length === 0 && 'There are no tools available currently. '}
+                 {(searchQuery || selectedTag) ? 'Try clearing filters.' : ''}
               </p>
               {(searchQuery || selectedTag) && (
                 <button

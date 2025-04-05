@@ -1,39 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllTags } from '@/lib/tools';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import useSWR from 'swr';
 
 interface TagFilterProps {
   selectedTag: string | null;
   onChange: (tag: string | null) => void;
 }
 
+const tagsFetcher = async (): Promise<string[]> => {
+  console.log("SWR Fetcher called for tags");
+  return getAllTags();
+};
+
 const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange }) => {
-  const [tags, setTags] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const fetchedTags = await getAllTags();
-        setTags(fetchedTags);
-      } catch (error) {
-        console.error("Error fetching tags:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data: tags, error, isLoading } = useSWR<string[], Error>(
+    'tags',
+    tagsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
+  );
 
-    fetchTags();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="p-4 border rounded-md w-full">
+        <p className="text-sm text-muted-foreground mb-2">Loading tags...</p>
         <div className="flex overflow-x-auto pb-2 gap-2">
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[...Array(5)].map((i) => (
             <div key={i} className="h-6 w-16 bg-muted rounded-full animate-pulse" />
           ))}
         </div>
@@ -41,13 +40,29 @@ const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange }) => {
     );
   }
 
-  const handleTagClick = (tag: string) => {
-    if (selectedTag === tag) {
-      onChange(null);
-      navigate('/');
+  if (error) {
+     return (
+       <div className="p-4 border border-destructive/50 rounded-md w-full">
+          <p className="text-sm text-destructive">Error loading tags: {error.message}</p>
+       </div>
+     );
+  }
+
+  if (!tags) {
+      return (
+       <div className="p-4 border rounded-md w-full">
+          <p className="text-sm text-muted-foreground">No tags available.</p>
+       </div>
+     );
+  }
+
+  const handleTagClick = (tag: string | null) => {
+    const newSelectedTag = selectedTag === tag ? null : tag;
+    onChange(newSelectedTag);
+    if (newSelectedTag === null) {
+        navigate('/');
     } else {
-      onChange(tag);
-      navigate(`/tag/${tag}`);
+        navigate(`/tag/${newSelectedTag}`);
     }
   };
 
