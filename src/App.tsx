@@ -7,12 +7,12 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import LoginPage from "@/pages/LoginPage";
-import HomePage from "@/pages/HomePage";
 import ToolDetailPage from "@/pages/ToolDetailPage";
 import ProfilePage from "@/pages/ProfilePage";
-import DocumentsPage from "@/pages/DocumentsPage";
 import DocumentDetailPage from "@/pages/DocumentDetailPage";
 import NotFound from "@/pages/NotFound";
+import ContentFeedPage from "@/pages/ContentFeedPage";
+import { ContentType } from "@/types/content";
 
 const queryClient = new QueryClient();
 
@@ -33,11 +33,16 @@ const App = () => (
                     <Header />
                     <div className="flex-1">
                       <Routes>
+                        {/* Tools Routes */}
                         <Route
                           path="/"
                           element={
                             <ProtectedRoute>
-                              <HomePage />
+                              <ContentFeedPage 
+                                contentType={ContentType.TOOL} 
+                                title="Tool Library" 
+                                description="Explore our collection of helpful tools and utilities."
+                              />
                             </ProtectedRoute>
                           }
                         />
@@ -45,7 +50,11 @@ const App = () => (
                           path="/tag/:tag"
                           element={
                             <ProtectedRoute>
-                              <HomePage />
+                              <ContentFeedPage 
+                                contentType={ContentType.TOOL} 
+                                title="Tool Library" 
+                                description="Explore our collection of helpful tools and utilities."
+                              />
                             </ProtectedRoute>
                           }
                         />
@@ -57,11 +66,29 @@ const App = () => (
                             </ProtectedRoute>
                           }
                         />
+                        
+                        {/* Documents Routes */}
                         <Route
                           path="/documents"
                           element={
                             <ProtectedRoute>
-                              <DocumentsPage />
+                              <ContentFeedPage 
+                                contentType={ContentType.DOCUMENT} 
+                                title="Document Library" 
+                                description="Browse our documentation, guides, and tutorials."
+                              />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/documents/tag/:tag"
+                          element={
+                            <ProtectedRoute>
+                              <ContentFeedPage 
+                                contentType={ContentType.DOCUMENT} 
+                                title="Document Library" 
+                                description="Browse our documentation, guides, and tutorials."
+                              />
                             </ProtectedRoute>
                           }
                         />
@@ -73,6 +100,8 @@ const App = () => (
                             </ProtectedRoute>
                           }
                         />
+                        
+                        {/* Profile Route */}
                         <Route
                           path="/profile"
                           element={
@@ -81,6 +110,8 @@ const App = () => (
                             </ProtectedRoute>
                           }
                         />
+                        
+                        {/* 404 Route */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </div>
