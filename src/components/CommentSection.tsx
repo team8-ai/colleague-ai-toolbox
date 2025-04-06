@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { addComment, getCommentsByToolId, Comment } from '@/lib/tools';
+import { AuthError } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,26 +19,33 @@ const CommentSection: React.FC<CommentSectionProps> = ({ toolId }) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadComments = async () => {
       try {
+        setLoading(true);
         const fetchedComments = await getCommentsByToolId(toolId);
         setComments(fetchedComments);
       } catch (error) {
         console.error("Error loading comments:", error);
-        toast({
-          title: "Error loading comments",
-          description: "Please refresh the page to try again",
-          variant: "destructive",
-        });
+        if (error instanceof AuthError) {
+           console.error('AuthError caught loading comments:', error.message);
+           navigate('/login');
+        } else {
+          toast({
+            title: "Error loading comments",
+            description: "Please refresh the page to try again",
+            variant: "destructive",
+          });
+        }
       } finally {
         setLoading(false);
       }
     };
 
     loadComments();
-  }, [toolId]);
+  }, [toolId, navigate]);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,21 +73,41 @@ const CommentSection: React.FC<CommentSectionProps> = ({ toolId }) => {
       await addComment(toolId, newComment);
       
       // Refresh comments
-      const updatedComments = await getCommentsByToolId(toolId);
-      setComments(updatedComments);
-      setNewComment('');
-      
-      toast({
-        title: "Comment posted",
-        description: "Your comment has been added successfully",
-      });
+      try {
+        const updatedComments = await getCommentsByToolId(toolId);
+        setComments(updatedComments);
+        setNewComment('');
+        
+        toast({
+          title: "Comment posted",
+          description: "Your comment has been added successfully",
+        });
+      } catch (refreshError) {
+          console.error("Error refreshing comments after post:", refreshError);
+          if (refreshError instanceof AuthError) {
+            console.error('AuthError caught refreshing comments:', refreshError.message);
+            navigate('/login');
+          } else {
+            // Optional: Indicate that the post succeeded but refresh failed
+             toast({
+               title: "Comment Posted, Update Error",
+               description: "Your comment was posted, but failed to refresh the list.",
+               variant: "default",
+            });
+          }
+      }
     } catch (error) {
       console.error("Error posting comment:", error);
-      toast({
-        title: "Error posting comment",
-        description: "Please try again",
-        variant: "destructive",
-      });
+      if (error instanceof AuthError) {
+        console.error('AuthError caught posting comment:', error.message);
+        navigate('/login');
+      } else {
+        toast({
+          title: "Error posting comment",
+          description: "Please try again",
+          variant: "destructive",
+        });
+      }
     } finally {
       setSubmitting(false);
     }

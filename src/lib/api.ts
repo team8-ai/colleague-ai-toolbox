@@ -1,13 +1,21 @@
 // API client for communicating with our Postgres backend
+import { API_CONFIG } from './config';
 
-// Base URL for API requests - should be configured based on environment
-// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ai-hub.team8.vc/api';
+// Define a custom error for authentication issues
+export class AuthError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
+// Base URL for API requests from central configuration
+const API_BASE_URL = API_CONFIG.baseUrl;
 
 // Helper function for API requests
 async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   // Default headers
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -30,9 +38,7 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   if (response.status === 401) {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
-    // Consider redirecting to login page here or throwing a specific error
-    // For now, just throw a generic error
-    throw new Error('Unauthorized: Please log in again.');
+    throw new AuthError('Unauthorized: Session expired. Please log in again.');
   }
   
   // Handle other non-2xx responses

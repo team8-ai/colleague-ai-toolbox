@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
 import { Tool, toggleLikeTool } from '@/lib/tools';
+import { AuthError } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 
 interface ToolCardProps {
@@ -15,6 +16,7 @@ interface ToolCardProps {
 
 const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Note: The backend currently doesn't provide information on *who* liked a tool,
   // only the count. So, we cannot display a specific "liked" state per user yet.
@@ -37,11 +39,16 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
       onLike();
     } catch (error) {
       console.error("Error toggling like:", error);
-      toast({
-        title: "Error",
-        description: "Failed to like the tool. Please try again.",
-        variant: "destructive",
-      });
+      if (error instanceof AuthError) {
+        console.error('AuthError caught during toggle like:', error.message);
+        navigate('/login');
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to like the tool. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

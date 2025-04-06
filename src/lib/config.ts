@@ -1,4 +1,3 @@
-
 // Application configuration
 
 // API configuration

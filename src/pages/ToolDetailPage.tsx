@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { getToolById, toggleLikeTool, Tool } from '@/lib/tools';
+import { AuthError } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -37,11 +38,16 @@ const ToolDetailPage: React.FC = () => {
         setTool(fetchedTool);
       } catch (error) {
         console.error("Error fetching tool:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load tool details",
-          variant: "destructive",
-        });
+        if (error instanceof AuthError) {
+           console.error('AuthError caught fetching tool:', error.message);
+           navigate('/login');
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to load tool details",
+            variant: "destructive",
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -72,15 +78,35 @@ const ToolDetailPage: React.FC = () => {
     try {
       await toggleLikeTool(id);
       // Refresh tool data
-      const updatedTool = await getToolById(id);
-      setTool(updatedTool);
+      try {
+         const updatedTool = await getToolById(id);
+         setTool(updatedTool);
+      } catch (refreshError) {
+         console.error("Error refreshing tool after like:", refreshError);
+         if (refreshError instanceof AuthError) {
+           console.error('AuthError caught refreshing tool after like:', refreshError.message);
+           navigate('/login');
+         } else {
+           // Optional: Show a toast that refresh failed, but like might have succeeded
+           toast({
+             title: "Update Error",
+             description: "Could not refresh tool data after liking.",
+             variant: "default",
+           });
+         }
+      }
     } catch (error) {
       console.error("Error toggling like:", error);
-      toast({
-        title: "Error",
-        description: "Failed to like the tool. Please try again.",
-        variant: "destructive",
-      });
+      if (error instanceof AuthError) {
+        console.error('AuthError caught toggling like:', error.message);
+        navigate('/login');
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to like the tool. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

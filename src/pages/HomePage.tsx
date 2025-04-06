@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getAllTools, getToolsByTag, Tool } from '@/lib/tools';
+import { AuthError } from '@/lib/api';
 import ToolCard from '@/components/ToolCard';
 import TagFilter from '@/components/TagFilter';
 import { Separator } from '@/components/ui/separator';
@@ -20,6 +21,7 @@ const fetcher = async ([_, tag]: [string, string | null]): Promise<Tool[]> => {
 
 const HomePage: React.FC = () => {
   const { tag: routeTag } = useParams<{ tag?: string }>();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<string | null>(routeTag || null);
 
@@ -38,6 +40,14 @@ const HomePage: React.FC = () => {
       // dedupingInterval: 2000, // Example: dedupe requests within 2 seconds
     }
   );
+
+  // --- Handle AuthError from SWR ---
+  useEffect(() => {
+    if (error instanceof AuthError) {
+      console.error('AuthError caught from SWR:', error.message);
+      navigate('/login');
+    }
+  }, [error, navigate]);
 
   const filteredTools = useMemo(() => {
     console.log("Filtering effect running. Search:", searchQuery, "Tag:", selectedTag, "Tools from SWR:", tools);
@@ -69,10 +79,20 @@ const HomePage: React.FC = () => {
     try {
       await mutate(swrKey);
       console.log("SWR revalidation triggered successfully after like.");
-    } catch (error) {
-      console.error("Error during like or SWR revalidation:", error);
+    } catch (err) {
+      console.error("Error during SWR revalidation after like:", err);
+      if (err instanceof AuthError) {
+         console.error('AuthError caught during like/revalidation:', err.message);
+         navigate('/login');
+      } else {
+         // Handle other potential errors from mutate if necessary
+         console.error("An unexpected error occurred during revalidation:", err);
+      }
     }
   };
+
+  // Display error state, but not if it's an AuthError (because we navigate away)
+  const displayError = error && !(error instanceof AuthError) ? error : null;
 
   console.log("Rendering HomePage. SWR isLoading:", isLoading, "SWR Error:", error, "Filtered Tools:", filteredTools);
 
@@ -119,20 +139,20 @@ const HomePage: React.FC = () => {
               ))}
             </div>
           )}
-          {error && (
+          {displayError && (
              <div className="flex flex-col items-center justify-center py-16 bg-destructive/10 rounded-xl border border-dashed border-destructive/50">
                 <p className="text-xl font-medium text-destructive mb-1">Error loading tools</p>
-                <p className="text-sm text-destructive/80 text-center max-w-xs">{error.message}</p>
+                <p className="text-sm text-destructive/80 text-center max-w-xs">{displayError.message}</p>
              </div>
           )}
-          {!isLoading && !error && filteredTools.length > 0 && (
+          {!isLoading && !displayError && filteredTools.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredTools.map((tool) => (
                 <ToolCard key={tool.id} tool={tool} onLike={handleToolLike} />
               ))}
             </div>
           )}
-          {!isLoading && !error && filteredTools.length === 0 && (
+          {!isLoading && !displayError && filteredTools.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-xl border border-dashed">
               <div className="bg-primary/10 p-4 rounded-full mb-4">
                 <Search className="h-8 w-8 text-primary" />
