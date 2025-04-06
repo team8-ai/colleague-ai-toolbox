@@ -1,7 +1,8 @@
 // API client for communicating with our Postgres backend
 
 // Base URL for API requests - should be configured based on environment
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ai-hub.team8.vc/api';
 
 // Helper function for API requests
 async function fetchAPI(endpoint: string, options: RequestInit = {}) {
