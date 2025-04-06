@@ -50,6 +50,8 @@ export interface PodcastContent extends BaseContent {
   duration: number;
   host?: string;
   episodeNumber?: number;
+  isLiked?: boolean;
+  content?: string; // HTML content for podcast details/show notes
 }
 
 // Union type for all content types

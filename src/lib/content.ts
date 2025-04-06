@@ -9,6 +9,7 @@ import {
 import { getAllTools, getToolsByTag } from './tools';
 import { documentsFetcher, Document } from './documents';
 import { getAllNews, getNewsByTag } from './news';
+import { getAllPodcasts, getPodcastsByTag } from './podcasts';
 
 // Generic content fetcher based on content type
 export async function fetchContent(
@@ -27,8 +28,8 @@ export async function fetchContent(
       const news = tag ? await getNewsByTag(tag) : await getAllNews();
       return news;
     case ContentType.PODCAST:
-      // To be implemented in future
-      return [];
+      const podcasts = tag ? await getPodcastsByTag(tag) : await getAllPodcasts();
+      return podcasts;
     default:
       throw new Error('Unsupported content type');
   }
@@ -84,6 +85,9 @@ export async function toggleLikeContent(id: string, contentType: ContentType): P
   } else if (contentType === ContentType.NEWS) {
     const { toggleLikeNews } = await import('./news');
     await toggleLikeNews(id);
+  } else if (contentType === ContentType.PODCAST) {
+    const { toggleLikePodcast } = await import('./podcasts');
+    await toggleLikePodcast(id);
   }
   // Other content types don't support likes yet
 } 

@@ -11,6 +11,7 @@ import ToolDetailPage from "@/pages/ToolDetailPage";
 import ProfilePage from "@/pages/ProfilePage";
 import DocumentDetailPage from "@/pages/DocumentDetailPage";
 import NewsDetailPage from "@/pages/NewsDetailPage";
+import PodcastDetailPage from "@/pages/PodcastDetailPage";
 import NotFound from "@/pages/NotFound";
 import ContentFeedPage from "@/pages/ContentFeedPage";
 import { ContentType } from "@/types/content";
@@ -132,6 +133,40 @@ const App = () => (
                           element={
                             <ProtectedRoute>
                               <NewsDetailPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        
+                        {/* Podcasts Routes */}
+                        <Route
+                          path="/podcasts"
+                          element={
+                            <ProtectedRoute>
+                              <ContentFeedPage 
+                                contentType={ContentType.PODCAST} 
+                                title="Podcast Library" 
+                                description="Listen to our podcast episodes and interviews."
+                              />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/podcasts/tag/:tag"
+                          element={
+                            <ProtectedRoute>
+                              <ContentFeedPage 
+                                contentType={ContentType.PODCAST} 
+                                title="Podcast Library" 
+                                description="Listen to our podcast episodes and interviews."
+                              />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/podcasts/:id"
+                          element={
+                            <ProtectedRoute>
+                              <PodcastDetailPage />
                             </ProtectedRoute>
                           }
                         />
