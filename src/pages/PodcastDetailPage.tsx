@@ -8,6 +8,10 @@ import { format } from 'date-fns';
 import { getPodcastById } from '@/lib/podcasts';
 import { AuthError } from '@/lib/api';
 
+import { FaSpotify } from "react-icons/fa";
+import { PiApplePodcastsLogoFill } from "react-icons/pi";
+
+
 const PodcastDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -133,10 +137,20 @@ const PodcastDetailPage: React.FC = () => {
             </div>
 
             <div className="mt-auto">
-              <div className="flex items-center">
-                <Button className="gap-2">
-                  <Headphones className="h-4 w-4" />
-                  <span>Play Episode</span>
+              <div className="flex items-center gap-3">
+                <Button 
+                  className="gap-2" 
+                  style={{ backgroundColor: "#1DB954", borderColor: "#1DB954" }}
+                >
+                  <FaSpotify className="h-5 w-5" />
+                  <span>Spotify</span>
+                </Button>
+                <Button 
+                  className="gap-2"
+                  style={{ backgroundColor: "#B150E2", borderColor: "#B150E2" }}
+                >
+                  <PiApplePodcastsLogoFill className="h-5 w-5" />
+                  <span>Apple Podcasts</span>
                 </Button>
               </div>
             </div>
