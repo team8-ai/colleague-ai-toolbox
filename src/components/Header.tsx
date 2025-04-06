@@ -46,9 +46,6 @@ const Header: React.FC = () => {
           <Link to="/documents" className="text-sm font-medium transition-colors hover:text-primary">
             Documents
           </Link>
-          <Link to="/events" className="text-sm font-medium transition-colors hover:text-primary">
-            Events
-          </Link>
           <Link to="/podcasts" className="text-sm font-medium transition-colors hover:text-primary">
             Podcasts
           </Link>

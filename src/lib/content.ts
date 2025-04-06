@@ -60,7 +60,9 @@ function transformDocumentToContent(doc: Document): DocumentContent {
     thumbnailUrl: doc.thumbnail_url,
     createdAt: doc.createdAt,
     fileUrl: undefined, // Not present in current Document interface
-    fileType: undefined // Not present in current Document interface
+    fileType: undefined, // Not present in current Document interface
+    likes: doc.likes || 0,
+    isLiked: doc.isLiked || false
   };
 }
 
@@ -70,11 +72,14 @@ export const contentFetcher = async ([_, contentType, tag]: [string, ContentType
   return fetchContent(contentType, tag);
 };
 
-// Toggle like for tool content
+// Toggle like for content
 export async function toggleLikeContent(id: string, contentType: ContentType): Promise<void> {
   if (contentType === ContentType.TOOL) {
     const { toggleLikeTool } = await import('./tools');
     await toggleLikeTool(id);
+  } else if (contentType === ContentType.DOCUMENT) {
+    const { toggleLikeDocument } = await import('./documents');
+    await toggleLikeDocument(id);
   }
   // Other content types don't support likes yet
 } 

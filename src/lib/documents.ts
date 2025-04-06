@@ -15,11 +15,23 @@ export interface Document {
   };
   createdAt: string;
   tags: string[];
+  likes?: number;
+  isLiked?: boolean;
 }
 
 // Get all unique document tags
 export const getAllDocumentTags = async (): Promise<string[]> => {
   return documentsAPI.getAllDocumentTags();
+};
+
+// Toggle like status for a document
+export const toggleLikeDocument = async (id: string): Promise<void> => {
+  try {
+    await documentsAPI.toggleLikeDocument(id);
+  } catch (error) {
+    console.error(`Error toggling like for document ${id}: `, error);
+    throw error;
+  }
 };
 
 // Fetcher function for SWR

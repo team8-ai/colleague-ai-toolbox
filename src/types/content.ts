@@ -29,6 +29,8 @@ export interface DocumentContent extends BaseContent {
   type: ContentType.DOCUMENT;
   fileUrl?: string;
   fileType?: string;
+  likes: number;
+  isLiked?: boolean;
 }
 
 // News specific content (for future use)
