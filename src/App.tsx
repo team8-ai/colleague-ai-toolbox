@@ -10,6 +10,8 @@ import LoginPage from "@/pages/LoginPage";
 import HomePage from "@/pages/HomePage";
 import ToolDetailPage from "@/pages/ToolDetailPage";
 import ProfilePage from "@/pages/ProfilePage";
+import DocumentsPage from "@/pages/DocumentsPage";
+import DocumentDetailPage from "@/pages/DocumentDetailPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +54,22 @@ const App = () => (
                           element={
                             <ProtectedRoute>
                               <ToolDetailPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/documents"
+                          element={
+                            <ProtectedRoute>
+                              <DocumentsPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/documents/:id"
+                          element={
+                            <ProtectedRoute>
+                              <DocumentDetailPage />
                             </ProtectedRoute>
                           }
                         />

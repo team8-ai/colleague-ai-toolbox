@@ -1,27 +1,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllTags } from '@/lib/tools';
+import { getAllDocumentTags } from '@/lib/documents';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import useSWR from 'swr';
 
-interface TagFilterProps {
+interface DocumentTagFilterProps {
   selectedTag: string | null;
   onChange: (tag: string | null) => void;
-  context?: 'tools' | 'documents';
 }
 
-const tagsFetcher = async (): Promise<string[]> => {
-  console.log("SWR Fetcher called for tags");
-  return getAllTags();
+const documentTagsFetcher = async (): Promise<string[]> => {
+  console.log("SWR Fetcher called for document tags");
+  return getAllDocumentTags();
 };
 
-const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange, context = 'tools' }) => {
+const DocumentTagFilter: React.FC<DocumentTagFilterProps> = ({ selectedTag, onChange }) => {
   const navigate = useNavigate();
 
   const { data: tags, error, isLoading } = useSWR<string[], Error>(
-    'tags',
-    tagsFetcher,
+    'document-tags',
+    documentTagsFetcher,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -33,7 +32,7 @@ const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange, context = 
       <div className="p-4 border rounded-md w-full">
         <p className="text-sm text-muted-foreground mb-2">Loading tags...</p>
         <div className="flex overflow-x-auto pb-2 gap-2">
-          {[...Array(5)].map((i) => (
+          {[...Array(5)].map((_, i) => (
             <div key={i} className="h-6 w-16 bg-muted rounded-full animate-pulse" />
           ))}
         </div>
@@ -49,7 +48,7 @@ const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange, context = 
      );
   }
 
-  if (!tags) {
+  if (!tags || tags.length === 0) {
       return (
        <div className="p-4 border rounded-md w-full">
           <p className="text-sm text-muted-foreground">No tags available.</p>
@@ -61,23 +60,10 @@ const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange, context = 
     const newSelectedTag = selectedTag === tag ? null : tag;
     onChange(newSelectedTag);
     
-    // Handle navigation differently based on context
-    if (context === 'documents') {
-      // When in documents context, we stay on the documents page
-      if (newSelectedTag === null) {
-        navigate('/documents');
-      } else {
-        // We don't navigate explicitly as SWR will handle the data fetching
-        // based on the selected tag. DocumentsPage would manage this.
-      }
-    } else {
-      // Original behavior for tools context
-      if (newSelectedTag === null) {
-        navigate('/');
-      } else {
-        navigate(`/tag/${newSelectedTag}`);
-      }
+    if (newSelectedTag === null) {
+      navigate('/documents');
     }
+    // For selected tags, we remain on the same page and let SWR handle data fetching
   };
 
   return (
@@ -88,7 +74,7 @@ const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange, context = 
           className="cursor-pointer transition-colors hover:bg-primary/10"
           onClick={() => handleTagClick(null)}
         >
-           {context === 'documents' ? 'All Documents' : 'All Tools'}
+          All Documents
         </Badge>
         {tags.map((tag) => (
           <Badge
@@ -105,4 +91,4 @@ const TagFilter: React.FC<TagFilterProps> = ({ selectedTag, onChange, context = 
   );
 };
 
-export default TagFilter;
+export default DocumentTagFilter; 
