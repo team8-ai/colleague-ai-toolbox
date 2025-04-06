@@ -81,6 +81,9 @@ export async function toggleLikeContent(id: string, contentType: ContentType): P
   } else if (contentType === ContentType.DOCUMENT) {
     const { toggleLikeDocument } = await import('./documents');
     await toggleLikeDocument(id);
+  } else if (contentType === ContentType.NEWS) {
+    const { toggleLikeNews } = await import('./news');
+    await toggleLikeNews(id);
   }
   // Other content types don't support likes yet
 } 

@@ -105,7 +105,7 @@ const ContentFeedPage: React.FC<ContentFeedPageProps> = ({
       case ContentType.DOCUMENT:
         return <DocumentContentCard key={item.id} content={item as any} onLike={handleContentLike} />;
       case ContentType.NEWS:
-        return <NewsContentCard key={item.id} content={item as any} />;
+        return <NewsContentCard key={item.id} content={item as any} onLike={handleContentLike} />;
       case ContentType.PODCAST:
         // Future implementation
         return null;

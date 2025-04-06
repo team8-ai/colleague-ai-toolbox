@@ -40,6 +40,7 @@ export interface NewsContent extends BaseContent {
   author?: string;
   publishDate: string;
   content?: string; // HTML content of the news article
+  isLiked?: boolean;
 }
 
 // Podcast specific content (for future use)

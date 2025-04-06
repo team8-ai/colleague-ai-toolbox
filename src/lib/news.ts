@@ -58,6 +58,26 @@ export async function getNewsById(id: string): Promise<NewsContent> {
   }
 }
 
+// Toggle like for a news item
+export async function toggleLikeNews(id: string): Promise<void> {
+  try {
+    // This would be replaced with actual API call in production
+    // For now, just mock the toggle in memory
+    const newsIndex = mockNewsData.findIndex(item => item.id === id);
+    
+    if (newsIndex !== -1) {
+      // Toggle the like status
+      mockNewsData[newsIndex].isLiked = !mockNewsData[newsIndex].isLiked;
+    }
+  } catch (error) {
+    console.error('Error toggling news like:', error);
+    if (error instanceof Response && error.status === 401) {
+      throw new AuthError('Authentication required to like news');
+    }
+    throw error;
+  }
+}
+
 // Mock news data
 const mockNewsData: NewsContent[] = [
   {
@@ -119,17 +139,5 @@ const mockNewsData: NewsContent[] = [
     sourceUrl: 'https://example.com/news/company-x-transformation',
     author: 'David Williams',
     publishDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: 'news-6',
-    type: ContentType.NEWS,
-    title: 'New Research Shows Impact of Remote Work on Collaboration',
-    description: 'A study reveals both challenges and opportunities in remote work environments, with recommendations for optimizing team collaboration.',
-    tags: ['Remote Work', 'Collaboration', 'Research'],
-    thumbnailUrl: 'https://images.unsplash.com/photo-1583321500900-82807e458f3a?q=80&w=1470&auto=format&fit=crop',
-    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-    sourceUrl: 'https://example.com/news/remote-work-research',
-    author: 'Sarah Miller',
-    publishDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
   }
 ]; 
