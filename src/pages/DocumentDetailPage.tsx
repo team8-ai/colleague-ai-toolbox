@@ -7,7 +7,7 @@ import { AuthError } from '@/lib/api';
 import { ArrowLeft, CalendarIcon, UserIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import useSWR from 'swr';
-import ReactMarkdown from 'react-markdown';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 const DocumentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -98,9 +98,7 @@ const DocumentDetailPage: React.FC = () => {
         </div>
 
         {/* Document content */}
-        <div className="prose prose-sm sm:prose lg:prose-lg dark:prose-invert max-w-none">
-          <ReactMarkdown>{document.content}</ReactMarkdown>
-        </div>
+        <MarkdownRenderer content={document.content} size="lg" />
       </div>
     </div>
   );
