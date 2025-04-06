@@ -39,6 +39,7 @@ export interface NewsContent extends BaseContent {
   sourceUrl: string;
   author?: string;
   publishDate: string;
+  content?: string; // HTML content of the news article
 }
 
 // Podcast specific content (for future use)

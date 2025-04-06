@@ -8,6 +8,7 @@ import {
 } from '@/types/content';
 import { getAllTools, getToolsByTag } from './tools';
 import { documentsFetcher, Document } from './documents';
+import { getAllNews, getNewsByTag } from './news';
 
 // Generic content fetcher based on content type
 export async function fetchContent(
@@ -23,8 +24,8 @@ export async function fetchContent(
       const documents = await documentsFetcher(url);
       return documents.map(transformDocumentToContent);
     case ContentType.NEWS:
-      // To be implemented in future
-      return [];
+      const news = tag ? await getNewsByTag(tag) : await getAllNews();
+      return news;
     case ContentType.PODCAST:
       // To be implemented in future
       return [];

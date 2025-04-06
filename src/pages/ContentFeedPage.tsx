@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { BaseContent, ContentType } from '@/types/content';
 import ToolContentCard from '@/components/ToolContentCard';
 import DocumentContentCard from '@/components/DocumentContentCard';
+import NewsContentCard from '@/components/NewsContentCard';
 import ContentTagFilter from '@/components/ContentTagFilter';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2 } from 'lucide-react';
@@ -104,8 +105,7 @@ const ContentFeedPage: React.FC<ContentFeedPageProps> = ({
       case ContentType.DOCUMENT:
         return <DocumentContentCard key={item.id} content={item as any} onLike={handleContentLike} />;
       case ContentType.NEWS:
-        // Future implementation
-        return null;
+        return <NewsContentCard key={item.id} content={item as any} />;
       case ContentType.PODCAST:
         // Future implementation
         return null;

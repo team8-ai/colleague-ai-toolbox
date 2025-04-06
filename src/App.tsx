@@ -10,6 +10,7 @@ import LoginPage from "@/pages/LoginPage";
 import ToolDetailPage from "@/pages/ToolDetailPage";
 import ProfilePage from "@/pages/ProfilePage";
 import DocumentDetailPage from "@/pages/DocumentDetailPage";
+import NewsDetailPage from "@/pages/NewsDetailPage";
 import NotFound from "@/pages/NotFound";
 import ContentFeedPage from "@/pages/ContentFeedPage";
 import { ContentType } from "@/types/content";
@@ -97,6 +98,40 @@ const App = () => (
                           element={
                             <ProtectedRoute>
                               <DocumentDetailPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        
+                        {/* News Routes */}
+                        <Route
+                          path="/news"
+                          element={
+                            <ProtectedRoute>
+                              <ContentFeedPage 
+                                contentType={ContentType.NEWS} 
+                                title="News Feed" 
+                                description="Stay updated with the latest news and announcements."
+                              />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/news/tag/:tag"
+                          element={
+                            <ProtectedRoute>
+                              <ContentFeedPage 
+                                contentType={ContentType.NEWS} 
+                                title="News Feed" 
+                                description="Stay updated with the latest news and announcements."
+                              />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/news/:id"
+                          element={
+                            <ProtectedRoute>
+                              <NewsDetailPage />
                             </ProtectedRoute>
                           }
                         />
