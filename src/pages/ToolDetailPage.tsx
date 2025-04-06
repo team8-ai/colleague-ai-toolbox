@@ -56,11 +56,6 @@ const ToolDetailPage: React.FC = () => {
     fetchTool();
   }, [id, navigate]);
 
-  // We changed tool.likes to be a number (count) based on backend response.
-  // The .includes() method doesn't exist on numbers.
-  // We cannot determine if the *current* user liked the tool from this data alone.
-  // We set isLiked to false as a placeholder.
-  // Backend needs to be updated to provide user-specific like status for this page.
   const isLiked = tool?.isLiked || false;
 
   const handleLike = async () => {

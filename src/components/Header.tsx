@@ -38,7 +38,7 @@ const Header: React.FC = () => {
 
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
-            Home
+            Tools
           </Link>
           <Link to="/news" className="text-sm font-medium transition-colors hover:text-primary">
             News
