@@ -49,7 +49,6 @@ export interface PodcastContent extends BaseContent {
   audioUrl: string;
   duration: number;
   host?: string;
-  episodeNumber?: number;
   isLiked?: boolean;
   content?: string; // HTML content for podcast details/show notes
 }

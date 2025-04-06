@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PodcastContent, ContentType } from '@/types/content';
-import { Clock, Headphones, Heart, User } from 'lucide-react';
+import { Clock, Heart, User } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toggleLikeContent } from '@/lib/content';
 import { useAuth } from '@/contexts/AuthContext';
@@ -78,14 +78,13 @@ const PodcastContentCard: React.FC<PodcastContentCardProps> = ({ content, onLike
       <CardHeader className="p-0">
         {localContent.thumbnailUrl && (
           <div className="relative aspect-square w-full overflow-hidden">
-            <img
-              src={localContent.thumbnailUrl}
-              alt={localContent.title}
-              className="object-cover h-full w-full transition-transform hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-              <Headphones className="h-12 w-12 text-white" />
-            </div>
+            <Link to={`/podcasts/${localContent.id}`}>
+              <img
+                src={localContent.thumbnailUrl}
+                alt={localContent.title}
+                className="object-cover h-full w-full transition-transform hover:scale-105"
+              />
+            </Link>
           </div>
         )}
       </CardHeader>
@@ -141,13 +140,8 @@ const PodcastContentCard: React.FC<PodcastContentCardProps> = ({ content, onLike
             to={`/podcasts/${localContent.id}`} 
             className="text-sm font-medium text-primary hover:underline"
           >
-            Listen now
+            Read summary
           </Link>
-          {localContent.episodeNumber && (
-            <span className="text-xs text-muted-foreground">
-              Episode {localContent.episodeNumber}
-            </span>
-          )}
         </div>
       </CardFooter>
     </Card>

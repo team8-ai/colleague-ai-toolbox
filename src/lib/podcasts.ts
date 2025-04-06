@@ -102,7 +102,6 @@ const mockPodcastData: PodcastContent[] = [
     audioUrl: 'https://example.com/podcasts/future-ai.mp3',
     duration: 1845, // 30:45 in seconds
     host: 'Dr. Emma Chen',
-    episodeNumber: 42,
   },
   {
     id: 'podcast-2',
@@ -115,7 +114,6 @@ const mockPodcastData: PodcastContent[] = [
     audioUrl: 'https://example.com/podcasts/remote-productivity.mp3',
     duration: 2520, // 42:00 in seconds
     host: 'Michael Rivers',
-    episodeNumber: 28,
   },
   {
     id: 'podcast-3',
@@ -128,7 +126,6 @@ const mockPodcastData: PodcastContent[] = [
     audioUrl: 'https://example.com/podcasts/cybersecurity.mp3',
     duration: 1980, // 33:00 in seconds
     host: 'Alex Morgan',
-    episodeNumber: 15,
   },
   {
     id: 'podcast-4',
@@ -141,7 +138,6 @@ const mockPodcastData: PodcastContent[] = [
     audioUrl: 'https://example.com/podcasts/leadership-disruption.mp3',
     duration: 3300, // 55:00 in seconds
     host: 'Sarah Williams',
-    episodeNumber: 33,
   },
   {
     id: 'podcast-5',
@@ -154,6 +150,5 @@ const mockPodcastData: PodcastContent[] = [
     audioUrl: 'https://example.com/podcasts/digital-transformation.mp3',
     duration: 2700, // 45:00 in seconds
     host: 'David Thompson',
-    episodeNumber: 21,
   }
 ]; 

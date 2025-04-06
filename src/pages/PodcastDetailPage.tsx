@@ -127,11 +127,6 @@ const PodcastDetailPage: React.FC = () => {
                 <Clock className="h-4 w-4" />
                 <span>{formatDuration(podcast.duration)}</span>
               </div>
-              {podcast.episodeNumber && (
-                <div>
-                  Episode {podcast.episodeNumber}
-                </div>
-              )}
               <div>
                 Posted {format(new Date(podcast.createdAt), 'MMMM d, yyyy')}
               </div>
