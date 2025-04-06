@@ -120,3 +120,28 @@ export const toolsAPI = {
     return fetchAPI('/tags');
   },
 };
+
+// Documents API
+export const documentsAPI = {
+  getAllDocuments: async () => {
+    return fetchAPI('/documents');
+  },
+  
+  getDocumentById: async (id: string) => {
+    return fetchAPI(`/documents/${id}`);
+  },
+  
+  getDocumentsByTag: async (tag: string) => {
+    return fetchAPI(`/documents/tag/${encodeURIComponent(tag)}`);
+  },
+  
+  getAllDocumentTags: async () => {
+    return fetchAPI('/documents/tags/all');
+  },
+  
+  toggleLikeDocument: async (documentId: string) => {
+    return fetchAPI(`/documents/${documentId}/like`, {
+      method: 'POST',
+    });
+  },
+};
