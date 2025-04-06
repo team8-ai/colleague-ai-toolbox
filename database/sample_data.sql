@@ -53,6 +53,53 @@ INSERT INTO ai_hub_app.podcasts (id, title, description, image_url, audio_url, d
 ('podcast-2', 'Ethical Considerations in AI', 'Exploring the ethical implications of advanced AI systems and how developers can address them.', 'https://example.com/podcasts/ethics.jpg', 'https://example.com/podcasts/ethics-ai.mp3', 2700, NOW() - INTERVAL '15 days', 'user3'),
 ('podcast-3', 'Building with AI Tools', 'A practical guide to incorporating AI tools into your development workflow for increased productivity.', 'https://example.com/podcasts/ai-tools.jpg', 'https://example.com/podcasts/building-ai-tools.mp3', 3200, NOW() - INTERVAL '5 days', 'user1');
 
+-- Sample Documents
+INSERT INTO ai_hub_app.documents (id, title, description, thumbnail_url, content, created_at, created_by_uid) VALUES
+('doc-1', 'Getting Started with AI Tools', 'A beginner''s guide to using artificial intelligence tools effectively.', NULL, '# Getting Started with AI Tools
+
+## Introduction
+This document will guide you through the basics of using AI tools effectively.
+
+## Key Concepts
+- Understanding AI limitations
+- Prompt engineering basics
+- Data privacy considerations
+
+## Best Practices
+1. Be specific in your requests
+2. Review AI outputs carefully
+3. Maintain human oversight', NOW() - INTERVAL '7 days', 'user1'),
+
+('doc-2', 'Advanced Prompt Engineering', 'Learn techniques for creating effective prompts for language models.', NULL, '# Advanced Prompt Engineering
+
+## Introduction
+Prompt engineering is the art of communicating effectively with language models.
+
+## Techniques
+- Chain-of-thought prompting
+- Few-shot learning
+- Instruction fine-tuning
+
+## Case Studies
+Examples of before/after prompts and their results.', NOW() - INTERVAL '14 days', 'user2'),
+
+('doc-3', 'AI Ethics Guidelines', 'A comprehensive guide to ethical considerations when building AI systems.', NULL, '# AI Ethics Guidelines
+
+## Introduction
+This document outlines important ethical considerations for AI development.
+
+## Core Principles
+- Fairness and bias mitigation
+- Transparency and explainability
+- Privacy and data protection
+- Safety and robustness
+
+## Implementation Strategies
+1. Diverse training data
+2. Regular auditing
+3. User consent frameworks
+4. Human oversight', NOW() - INTERVAL '3 days', 'user3');
+
 -- Content Tags relationships
 -- Tool tags
 INSERT INTO content_tags (content_type, content_id, tag_id)
@@ -90,6 +137,16 @@ SELECT 'podcast', 'podcast-2', id FROM ai_hub_app.tags WHERE name IN ('AI', 'Pod
 INSERT INTO content_tags (content_type, content_id, tag_id)
 SELECT 'podcast', 'podcast-3', id FROM ai_hub_app.tags WHERE name IN ('AI', 'Podcast', 'Tutorial', 'Developer Tools');
 
+-- Document tags
+INSERT INTO content_tags (content_type, content_id, tag_id)
+SELECT 'document', 'doc-1', id FROM ai_hub_app.tags WHERE name IN ('AI', 'Tutorial', 'Documentation');
+
+INSERT INTO content_tags (content_type, content_id, tag_id)
+SELECT 'document', 'doc-2', id FROM ai_hub_app.tags WHERE name IN ('AI', 'Documentation', 'Tutorial', 'Research');
+
+INSERT INTO content_tags (content_type, content_id, tag_id)
+SELECT 'document', 'doc-3', id FROM ai_hub_app.tags WHERE name IN ('AI', 'Documentation', 'AI Ethics', 'Research');
+
 -- Likes
 -- Tool likes
 INSERT INTO ai_hub_app.likes (content_type, content_id, created_by_uid) VALUES
@@ -126,6 +183,17 @@ INSERT INTO ai_hub_app.likes (content_type, content_id, created_by_uid) VALUES
 ('podcast', 'podcast-3', 'user2'),
 ('podcast', 'podcast-3', 'user3');
 
+-- Document likes
+INSERT INTO ai_hub_app.likes (content_type, content_id, created_by_uid) VALUES
+('document', 'doc-1', 'user2'),
+('document', 'doc-1', 'user3'),
+('document', 'doc-1', 'user4'),
+('document', 'doc-2', 'user1'),
+('document', 'doc-2', 'user3'),
+('document', 'doc-3', 'user1'),
+('document', 'doc-3', 'user2'),
+('document', 'doc-3', 'user4');
+
 -- Comments
 -- Tool comments
 INSERT INTO ai_hub_app.comments (content_type, content_id, text, created_at, created_by_uid) VALUES
@@ -148,6 +216,13 @@ INSERT INTO ai_hub_app.comments (content_type, content_id, text, created_at, cre
 ('podcast', 'podcast-1', 'Great discussion! Loved the insights about multimodal models.', NOW() - INTERVAL '9 days', 'user3'),
 ('podcast', 'podcast-2', 'Important topic that every AI developer should consider.', NOW() - INTERVAL '14 days', 'user1'),
 ('podcast', 'podcast-3', 'Very practical advice. I''ve started using some of these tools in my workflow.', NOW() - INTERVAL '4 days', 'user4');
+
+-- Document comments
+INSERT INTO ai_hub_app.comments (content_type, content_id, text, created_at, created_by_uid) VALUES
+('document', 'doc-1', 'This is an excellent introduction for beginners. Very clear explanations!', NOW() - INTERVAL '6 days', 'user2'),
+('document', 'doc-1', 'I would add a section about model selection for different tasks.', NOW() - INTERVAL '5 days', 'user3'),
+('document', 'doc-2', 'The techniques section was particularly helpful for my work.', NOW() - INTERVAL '10 days', 'user1'),
+('document', 'doc-3', 'Great comprehensive overview of AI ethics. Should be required reading.', NOW() - INTERVAL '2 days', 'user4');
 
 -- Refresh the materialized view to get accurate like counts
 REFRESH MATERIALIZED VIEW content_like_counts;

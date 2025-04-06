@@ -51,8 +51,20 @@ CREATE TABLE ai_hub_app.podcasts (
     FOREIGN KEY (created_by_uid) REFERENCES ai_hub_app.users(uid) ON DELETE CASCADE
 );
 
+-- Documents table
+CREATE TABLE ai_hub_app.documents (
+    id VARCHAR(255) PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    thumbnail_url TEXT,
+    content TEXT NOT NULL, -- Markdown content
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_by_uid VARCHAR(255) NOT NULL,
+    FOREIGN KEY (created_by_uid) REFERENCES ai_hub_app.users(uid) ON DELETE CASCADE
+);
+
 -- Content type enum
-CREATE TYPE content_type AS ENUM ('tool', 'news', 'podcast');
+CREATE TYPE content_type AS ENUM ('tool', 'news', 'podcast', 'document');
 
 -- Comments table with polymorphic association
 CREATE TABLE ai_hub_app.comments (
@@ -115,7 +127,12 @@ UNION ALL
 SELECT 'podcast' AS content_type, podcasts.id AS content_id, COUNT(*) AS likes_count
 FROM ai_hub_app.podcasts
 LEFT JOIN ai_hub_app.likes ON likes.content_type = 'podcast' AND likes.content_id = podcasts.id
-GROUP BY podcasts.id;
+GROUP BY podcasts.id
+UNION ALL
+SELECT 'document' AS content_type, documents.id AS content_id, COUNT(*) AS likes_count
+FROM ai_hub_app.documents
+LEFT JOIN ai_hub_app.likes ON likes.content_type = 'document' AND likes.content_id = documents.id
+GROUP BY documents.id;
 
 -- Function to refresh like counts materialized view
 CREATE OR REPLACE FUNCTION refresh_content_like_counts()
