@@ -9,6 +9,7 @@ export interface Tool {
   url: string;
   tags: string[];
   likes: number;
+  isLiked: boolean; // Add this field
 }
 
 export interface Comment {

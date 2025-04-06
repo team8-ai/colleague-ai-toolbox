@@ -61,7 +61,7 @@ const ToolDetailPage: React.FC = () => {
   // We cannot determine if the *current* user liked the tool from this data alone.
   // We set isLiked to false as a placeholder.
   // Backend needs to be updated to provide user-specific like status for this page.
-  const isLiked = false; // Placeholder - Was: user && tool?.likes?.includes(user.uid);
+  const isLiked = tool?.isLiked || false;
 
   const handleLike = async () => {
     if (!user) {
@@ -73,29 +73,28 @@ const ToolDetailPage: React.FC = () => {
       return;
     }
 
-    if (!id) return;
+    if (!id || !tool) return;
+
+    // Optimistic UI update
+    const newIsLiked = !isLiked;
+    const likeDelta = newIsLiked ? 1 : -1;
+    setTool({
+      ...tool,
+      isLiked: newIsLiked,
+      likes: tool.likes + likeDelta
+    });
 
     try {
       await toggleLikeTool(id);
-      // Refresh tool data
-      try {
-         const updatedTool = await getToolById(id);
-         setTool(updatedTool);
-      } catch (refreshError) {
-         console.error("Error refreshing tool after like:", refreshError);
-         if (refreshError instanceof AuthError) {
-           console.error('AuthError caught refreshing tool after like:', refreshError.message);
-           navigate('/login');
-         } else {
-           // Optional: Show a toast that refresh failed, but like might have succeeded
-           toast({
-             title: "Update Error",
-             description: "Could not refresh tool data after liking.",
-             variant: "default",
-           });
-         }
-      }
+      // No need to refresh immediately since we already updated the UI
     } catch (error) {
+      // Revert the optimistic update on error
+      setTool({
+        ...tool,
+        isLiked: !newIsLiked,
+        likes: tool.likes - likeDelta
+      });
+      
       console.error("Error toggling like:", error);
       if (error instanceof AuthError) {
         console.error('AuthError caught toggling like:', error.message);

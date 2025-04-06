@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,12 +17,13 @@ interface ToolCardProps {
 const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [localTool, setLocalTool] = useState(tool);
   
   // Note: The backend currently doesn't provide information on *who* liked a tool,
   // only the count. So, we cannot display a specific "liked" state per user yet.
   // We'll assume isLiked is false for now, but keep the handleLike functionality.
   // You might need to adjust the backend to return user-specific like status.
-  const isLiked = false; // Placeholder - update if backend changes
+  const isLiked = localTool.isLiked;
 
   const handleLike = async () => {
     if (!user) {
@@ -34,10 +35,26 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
       return;
     }
 
+    // Optimistic UI update
+    const newIsLiked = !isLiked;
+    const likeDelta = newIsLiked ? 1 : -1;
+    setLocalTool({
+      ...localTool,
+      isLiked: newIsLiked,
+      likes: localTool.likes + likeDelta
+    });
+
     try {
-      await toggleLikeTool(tool.id);
+      await toggleLikeTool(localTool.id);
       onLike();
     } catch (error) {
+      // Revert the optimistic update on error
+      setLocalTool({
+        ...localTool,
+        isLiked: !newIsLiked,
+        likes: localTool.likes - likeDelta
+      });
+      
       console.error("Error toggling like:", error);
       if (error instanceof AuthError) {
         console.error('AuthError caught during toggle like:', error.message);
@@ -56,9 +73,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
     <Card className="overflow-hidden h-full flex flex-col transition-all hover:shadow-lg border-transparent hover:border-primary/20 bg-background/60 backdrop-blur-sm">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-          <Link to={`/tool/${tool.id}`} className="flex-grow mr-2">
+          <Link to={`/tool/${localTool.id}`} className="flex-grow mr-2">
             <CardTitle className="text-lg font-semibold line-clamp-1 hover:text-primary transition-colors">
-              {tool.name}
+              {localTool.name}
             </CardTitle>
           </Link>
           <Button 
@@ -72,24 +89,24 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
         </div>
       </CardHeader>
       <CardContent className="flex-grow pt-0">
-        <Link to={`/tool/${tool.id}`} className="block mb-3">
+        <Link to={`/tool/${localTool.id}`} className="block mb-3">
           <div className="aspect-video rounded-md overflow-hidden bg-muted relative group">
-            {tool.image_url ? (
+            {localTool.image_url ? (
               <img 
-                src={tool.image_url}
-                alt={tool.name} 
+                src={localTool.image_url}
+                alt={localTool.name} 
                 className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-secondary text-secondary-foreground">
-                <span className="text-2xl font-semibold">{tool.name.substring(0, 2).toUpperCase()}</span>
+                <span className="text-2xl font-semibold">{localTool.name.substring(0, 2).toUpperCase()}</span>
               </div>
             )}
           </div>
         </Link>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{tool.description}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{localTool.description}</p>
         <div className="flex flex-wrap gap-1">
-          {tool.tags.slice(0, 3).map((tag) => (
+          {localTool.tags.slice(0, 3).map((tag) => (
             <Badge key={`tag-${tag}`} variant="secondary" className="text-xs font-normal">
               {tag}
             </Badge>
@@ -98,13 +115,13 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onLike }) => {
       </CardContent>
       <CardFooter className="pt-3 flex justify-between items-center">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <Heart className={`h-3 w-3 ${tool.likes > 0 ? 'text-red-500/80 fill-current' : ''}`} />
+          <Heart className={`h-3 w-3 ${localTool.likes > 0 ? 'text-red-500/80 fill-current' : ''}`} />
           <span>
-            {tool.likes || 0} {tool.likes === 1 ? 'like' : 'likes'}
+            {localTool.likes || 0} {localTool.likes === 1 ? 'like' : 'likes'}
           </span>
         </div>
         <Button asChild variant="outline" size="sm" className="text-xs h-7 px-2">
-          <Link to={`/tool/${tool.id}`}>View details</Link>
+          <Link to={`/tool/${localTool.id}`}>View details</Link>
         </Button>
       </CardFooter>
     </Card>

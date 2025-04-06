@@ -75,20 +75,24 @@ const HomePage: React.FC = () => {
   };
 
   const handleToolLike = async () => {
-    console.log("Tool liked, triggering SWR revalidation for key:", swrKey);
-    try {
-      await mutate(swrKey);
-      console.log("SWR revalidation triggered successfully after like.");
-    } catch (err) {
-      console.error("Error during SWR revalidation after like:", err);
-      if (err instanceof AuthError) {
-         console.error('AuthError caught during like/revalidation:', err.message);
-         navigate('/login');
-      } else {
-         // Handle other potential errors from mutate if necessary
-         console.error("An unexpected error occurred during revalidation:", err);
+    console.log("Tool liked, will trigger SWR revalidation after delay");
+    
+    // Delay the revalidation to allow UI to be responsive
+    setTimeout(async () => {
+      try {
+        await mutate(swrKey);
+        console.log("SWR revalidation triggered successfully after like.");
+      } catch (err) {
+        console.error("Error during SWR revalidation after like:", err);
+        if (err instanceof AuthError) {
+          console.error('AuthError caught during like/revalidation:', err.message);
+          navigate('/login');
+        } else {
+          // Handle other potential errors from mutate if necessary
+          console.error("An unexpected error occurred during revalidation:", err);
+        }
       }
-    }
+    }, 500); // 500ms delay to ensure UI feels responsive
   };
 
   // Display error state, but not if it's an AuthError (because we navigate away)
