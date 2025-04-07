@@ -9,12 +9,15 @@ export class AuthError extends Error {
   }
 }
 
-// Base URL for API requests from central configuration
-const API_BASE_URL = API_CONFIG.baseUrl;
+// Helper function to determine the base path
+function getBasePath() {
+  // In development, use the full base URL from config. In production, use the relative /api path.
+  return import.meta.env.DEV ? API_CONFIG.baseUrl : '/api';
+}
 
 // Helper function for API requests
 async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${getBasePath()}${endpoint}`;
 
   // Default headers
   const headers: HeadersInit = {
@@ -57,8 +60,9 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
 // Auth API
 export const authAPI = {
   login: async (email: string, password: string) => {
-    // Use fetch directly here as fetchAPI expects a token which we don't have yet
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const url = `${getBasePath()}/auth/login`;
+      
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
