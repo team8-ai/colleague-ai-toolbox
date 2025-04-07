@@ -71,11 +71,13 @@ const NewsContentCard: React.FC<NewsContentCardProps> = ({ content, onLike }) =>
       <CardHeader className="p-0">
         {localContent.thumbnailUrl && (
           <div className="relative aspect-video w-full overflow-hidden">
-            <img
-              src={localContent.thumbnailUrl}
-              alt={localContent.title}
-              className="object-cover h-full w-full transition-transform hover:scale-105"
-            />
+            <Link to={`/news/${localContent.id}`}>
+              <img
+                src={localContent.thumbnailUrl}
+                alt={localContent.title}
+                className="object-cover h-full w-full transition-transform hover:scale-105"
+              />
+            </Link>
           </div>
         )}
       </CardHeader>

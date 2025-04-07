@@ -15,6 +15,7 @@ import NewsDetailPage from "@/pages/NewsDetailPage";
 import PodcastDetailPage from "@/pages/PodcastDetailPage";
 import NotFound from "@/pages/NotFound";
 import ContentFeedPage from "@/pages/ContentFeedPage";
+import LikedContentPage from "@/pages/LikedContentPage";
 import { ContentType } from "@/types/content";
 
 const queryClient = new QueryClient();
@@ -179,6 +180,16 @@ const App = () => (
                             element={
                               <ProtectedRoute>
                                 <ProfilePage />
+                              </ProtectedRoute>
+                            }
+                          />
+                          
+                          {/* Liked Content Route */}
+                          <Route
+                            path="/liked"
+                            element={
+                              <ProtectedRoute>
+                                <LikedContentPage />
                               </ProtectedRoute>
                             }
                           />
