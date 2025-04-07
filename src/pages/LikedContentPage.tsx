@@ -67,11 +67,12 @@ const LikedContentPage: React.FC = () => {
       setIsLoading(true);
       try {
         const content = await fetchLikedContent();
+        console.log('Fetched liked content:', content);
         setLikedContent(content);
         
         // Extract all unique tags
         const tags = Array.from(new Set(
-          content.flatMap(item => item.tags)
+          content.flatMap(item => item.tags || [])
         )).sort();
         setAllTags(tags);
         
@@ -90,9 +91,69 @@ const LikedContentPage: React.FC = () => {
     loadContent();
   }, [user, navigate]);
 
+  // Transform API data to match expected component interfaces
+  const adaptContent = (item: any): Content => {
+    // Common properties
+    const baseContent = {
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      tags: item.tags || [],
+      thumbnailUrl: item.icon || undefined,
+      createdAt: item.publishedDate || new Date().toISOString(),
+      likes: 1, // This item is liked
+      isLiked: true,
+    };
+
+    // Type-specific properties
+    const normalizedType = item.type.toLowerCase();
+    
+    switch (normalizedType) {
+      case ContentType.TOOL:
+        return {
+          ...baseContent,
+          type: ContentType.TOOL,
+          url: item.url || '#',
+        };
+      case ContentType.DOCUMENT:
+        return {
+          ...baseContent,
+          type: ContentType.DOCUMENT,
+          fileUrl: item.url || '#',
+          fileType: 'pdf',
+        };
+      case ContentType.NEWS:
+        return {
+          ...baseContent,
+          type: ContentType.NEWS,
+          sourceUrl: item.url || '#',
+          author: item.author || 'Unknown',
+          publishDate: item.publishedDate || new Date().toISOString(),
+        };
+      case ContentType.PODCAST:
+        return {
+          ...baseContent,
+          type: ContentType.PODCAST,
+          audioUrl: item.url || '#',
+          duration: 0,
+          host: item.author || 'Unknown',
+        };
+      default:
+        return {
+          ...baseContent,
+          type: ContentType.TOOL,
+          url: item.url || '#',
+        };
+    }
+  };
+
   // Filter content based on search, tags, and content type
   useEffect(() => {
-    let result = [...likedContent];
+    // Transform API data to match expected component interfaces
+    const adaptedContent = likedContent.map(adaptContent);
+    
+    let result = [...adaptedContent];
+    console.log('Filtering from liked content:', adaptedContent.length); // Debug log
 
     // Filter by search term
     if (searchTerm) {
@@ -100,7 +161,7 @@ const LikedContentPage: React.FC = () => {
       result = result.filter(
         item => 
           item.title.toLowerCase().includes(term) || 
-          item.description.toLowerCase().includes(term) ||
+          item.description.toLowerCase().includes(term) || 
           item.tags.some(tag => tag.toLowerCase().includes(term))
       );
     }
@@ -117,6 +178,7 @@ const LikedContentPage: React.FC = () => {
       result = result.filter(item => item.type === selectedType);
     }
 
+    console.log('Filtered content:', result.length); // Debug log
     setFilteredContent(result);
   }, [likedContent, searchTerm, selectedTags, selectedType]);
 
@@ -167,34 +229,37 @@ const LikedContentPage: React.FC = () => {
     return (
       <Badge 
         variant="outline" 
-        className="absolute top-2 right-2 flex items-center gap-1 bg-background/80 backdrop-blur-sm"
+        className="absolute top-2 left-2 flex items-center gap-1 bg-background/80 backdrop-blur-sm"
       >
         {getContentTypeIcon(type)}
-        <span>{labels[type]}</span>
+        <span>{labels[type] || type}</span>
       </Badge>
     );
   };
 
   // Render a content card based on its type
-  const renderContentCard = (item: Content) => {
+  const renderContentCard = (item: any) => {
+    console.log('Rendering content card:', item); // Debug log
+    
     // Create a wrapper to add type badge to each card
     const WrappedCard = () => {
       let card;
       
       switch (item.type) {
         case ContentType.TOOL:
-          card = <ToolContentCard content={item} onLike={handleContentLike} />;
+          card = <ToolContentCard content={item} onLike={handleContentLike} />; 
           break;
         case ContentType.DOCUMENT:
-          card = <DocumentContentCard content={item} onLike={handleContentLike} />;
+          card = <DocumentContentCard content={item} onLike={handleContentLike} />; 
           break;
         case ContentType.NEWS:
-          card = <NewsContentCard content={item} onLike={handleContentLike} />;
+          card = <NewsContentCard content={item} onLike={handleContentLike} />; 
           break;
         case ContentType.PODCAST:
-          card = <PodcastContentCard content={item} onLike={handleContentLike} />;
+          card = <PodcastContentCard content={item} onLike={handleContentLike} />; 
           break;
         default:
+          console.warn('Unknown content type:', item.type);
           return null;
       }
       
@@ -305,6 +370,11 @@ const LikedContentPage: React.FC = () => {
           />
         </div>
       )}
+
+      {/* Debug info */}
+      <div className="mb-4 p-2 bg-muted rounded-md text-xs">
+        <p>Debug: Found {filteredContent.length} items to display</p>
+      </div>
 
       {/* Content grid */}
       {filteredContent.length > 0 ? (
