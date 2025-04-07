@@ -1,5 +1,13 @@
+[build]
+
 [[redirects]]
   from = "/api/*"
   to = "http://34.198.232.22:8080/api/:splat"
   status = 200
   force = true
+  headers = {Access-Control-Allow-Origin = "*"}
+  
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "upgrade-insecure-requests"
