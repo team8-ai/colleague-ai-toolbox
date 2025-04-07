@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -11,10 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Sun, Moon } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const getInitials = (name: string | null) => {
     if (!name) return 'U';
@@ -53,6 +55,19 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleTheme} 
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
+
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
