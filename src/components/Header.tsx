@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User, Sun, Moon } from 'lucide-react';
+import { LogOut, User, Sun, Moon, Heart } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
 
   const getInitials = (name: string | null) => {
     if (!name) return 'U';
@@ -26,6 +27,13 @@ const Header: React.FC = () => {
       .join('')
       .toUpperCase()
       .substring(0, 2);
+  };
+
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname.startsWith('/tag/') || location.pathname.startsWith('/tool/');
+    }
+    return location.pathname.startsWith(path);
   };
 
   return (
@@ -39,19 +47,38 @@ const Header: React.FC = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link 
+            to="/" 
+            className={`text-sm font-medium transition-colors hover:text-primary ${
+              isActive('/') ? 'bg-secondary rounded px-3 py-1.5 text-primary font-semibold' : ''
+            }`}
+          >
             Tools
           </Link>
-          <Link to="/news" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link 
+            to="/news" 
+            className={`text-sm font-medium transition-colors hover:text-primary ${
+              isActive('/news') ? 'bg-secondary rounded px-3 py-1.5 text-primary font-semibold' : ''
+            }`}
+          >
             News
           </Link>
-          <Link to="/documents" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link 
+            to="/documents" 
+            className={`text-sm font-medium transition-colors hover:text-primary ${
+              isActive('/documents') ? 'bg-secondary rounded px-3 py-1.5 text-primary font-semibold' : ''
+            }`}
+          >
             Documents
           </Link>
-          <Link to="/podcasts" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link 
+            to="/podcasts" 
+            className={`text-sm font-medium transition-colors hover:text-primary ${
+              isActive('/podcasts') ? 'bg-secondary rounded px-3 py-1.5 text-primary font-semibold' : ''
+            }`}
+          >
             Podcasts
           </Link>
-
         </nav>
 
         <div className="flex items-center gap-4">
@@ -94,6 +121,13 @@ const Header: React.FC = () => {
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/liked" className="cursor-pointer flex items-center">
+                    <Heart className="mr-2 h-4 w-4" />
+                    <span>Liked Content</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => logout()}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
