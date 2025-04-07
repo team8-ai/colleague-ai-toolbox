@@ -36,10 +36,21 @@ import { Badge } from '@/components/ui/badge';
 // Placeholder for the actual API call function
 const fetchLikedContent = async (): Promise<Content[]> => {
   try {
-    const response = await fetch('/api/user/liked-content');
+    // Check if we're in development mode
+    const baseUrl = import.meta.env.DEV ? 'http://localhost:3000' : '';
+    const response = await fetch(`${baseUrl}/api/likes/`, {
+      credentials: 'include', // Include cookies for authentication
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
     if (!response.ok) {
-      throw new Error('Failed to fetch liked content');
+      const errorText = await response.text();
+      console.error('API error response:', errorText);
+      throw new Error(`Failed to fetch liked content: ${response.status}`);
     }
+    
     return await response.json();
   } catch (error) {
     console.error('Error fetching liked content:', error);
@@ -60,7 +71,7 @@ const LikedContentPage: React.FC = () => {
   const [allTags, setAllTags] = useState<string[]>([]);
 
   // SWR key for mutating content
-  const swrKey = '/api/user/liked-content';
+  const swrKey = '/api/likes/';
 
   useEffect(() => {
     if (!user) {
