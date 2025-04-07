@@ -121,6 +121,20 @@ export const toolsAPI = {
   },
 };
 
+// Likes API
+export const likesAPI = {
+  getLikedContent: async () => {
+    return fetchAPI('/likes/');
+  },
+  
+  toggleLike: async (contentId: string, contentType: string) => {
+    return fetchAPI(`/likes/toggle`, {
+      method: 'POST',
+      body: JSON.stringify({ contentId, contentType }),
+    });
+  },
+};
+
 // Documents API
 export const documentsAPI = {
   getAllDocuments: async () => {

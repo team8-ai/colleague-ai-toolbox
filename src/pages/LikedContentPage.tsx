@@ -17,7 +17,7 @@ import {
   Filter,
   Heart
 } from 'lucide-react';
-import { AuthError } from '@/lib/api';
+import { AuthError, likesAPI } from '@/lib/api';
 import { mutate } from 'swr';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -33,25 +33,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 
-// Placeholder for the actual API call function
 const fetchLikedContent = async (): Promise<Content[]> => {
   try {
-    // Check if we're in development mode
-    const baseUrl = import.meta.env.DEV ? 'http://localhost:3000' : '';
-    const response = await fetch(`${baseUrl}/api/likes/`, {
-      credentials: 'include', // Include cookies for authentication
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API error response:', errorText);
-      throw new Error(`Failed to fetch liked content: ${response.status}`);
-    }
-    
-    return await response.json();
+    return await likesAPI.getLikedContent();
   } catch (error) {
     console.error('Error fetching liked content:', error);
     throw error;
@@ -71,7 +55,7 @@ const LikedContentPage: React.FC = () => {
   const [allTags, setAllTags] = useState<string[]>([]);
 
   // SWR key for mutating content
-  const swrKey = '/api/likes/';
+  const swrKey = '/likes/';
 
   useEffect(() => {
     if (!user) {
