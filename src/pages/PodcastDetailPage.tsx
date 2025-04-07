@@ -150,7 +150,7 @@ const PodcastDetailPage: React.FC = () => {
                   style={{ backgroundColor: "#B150E2", borderColor: "#B150E2" }}
                 >
                   <PiApplePodcastsLogoFill className="h-5 w-5" />
-                  <span>Apple Podcasts</span>
+                  <span>Podcasts</span>
                 </Button>
               </div>
             </div>
