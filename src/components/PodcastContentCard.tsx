@@ -75,29 +75,13 @@ const PodcastContentCard: React.FC<PodcastContentCardProps> = ({ content, onLike
 
   return (
     <Card className="overflow-hidden transition-all hover:shadow-md h-full flex flex-col">
-      <CardHeader className="p-0">
-        {localContent.thumbnailUrl && (
-          <div className="relative aspect-video w-full overflow-hidden bg-white">
-            <Link to={`/podcasts/${localContent.id}`}>
-              <img
-                src={localContent.thumbnailUrl}
-                alt={localContent.title}
-                className="object-contain h-full w-full transition-transform hover:scale-105"
-              />
-            </Link>
-          </div>
-        )}
-      </CardHeader>
-      <CardContent className="p-5 flex-grow">
-        <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground mb-2">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center">
-              <Clock className="h-3 w-3 mr-1" />
-              {formatDuration(localContent.duration)}
-            </div>
-            <span>•</span>
-            <div>{formattedDate}</div>
-          </div>
+      <CardHeader className="pb-2 pt-10">
+        <div className="flex justify-between items-start">
+          <Link to={`/podcasts/${localContent.id}`} className="flex-grow mr-2">
+            <h3 className="font-semibold text-lg group-hover:text-primary line-clamp-2">
+              {localContent.title}
+            </h3>
+          </Link>
           <Button 
             variant="ghost" 
             size="icon" 
@@ -107,20 +91,38 @@ const PodcastContentCard: React.FC<PodcastContentCardProps> = ({ content, onLike
             <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
           </Button>
         </div>
-        <Link to={`/podcasts/${localContent.id}`} className="block group">
-          <h3 className="font-semibold text-lg mb-2 group-hover:text-primary line-clamp-2">
-            {localContent.title}
-          </h3>
+      </CardHeader>
+      <CardContent className="flex-grow pt-0">
+        <Link to={`/podcasts/${localContent.id}`} className="block mb-3">
+          <div className="aspect-video rounded-md overflow-hidden bg-white relative group">
+            {localContent.thumbnailUrl ? (
+              <img
+                src={localContent.thumbnailUrl}
+                alt={localContent.title}
+                className="object-contain h-full w-full transition-transform group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-secondary text-secondary-foreground">
+                <span className="text-2xl font-semibold">{localContent.title.substring(0, 2).toUpperCase()}</span>
+              </div>
+            )}
+          </div>
         </Link>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+          <div>{formattedDate}</div>
+          {localContent.host && (
+            <>
+              <span>•</span>
+              <div className="flex items-center">
+                <User className="h-3 w-3 mr-1" />
+                <span>{localContent.host}</span>
+              </div>
+            </>
+          )}
+        </div>
         <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
           {localContent.description}
         </p>
-        {localContent.host && (
-          <div className="flex items-center gap-2 mb-3 text-xs">
-            <User className="h-3 w-3" />
-            <span className="text-muted-foreground">Hosted by <span className="font-medium">{localContent.host}</span></span>
-          </div>
-        )}
         <div className="flex flex-wrap gap-2 mt-auto">
           {localContent.tags.slice(0, 3).map((tag) => (
             <Badge key={tag} variant="secondary" className="px-2 py-0.5 text-xs">
