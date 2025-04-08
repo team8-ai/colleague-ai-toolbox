@@ -56,9 +56,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       const response = await authAPI.login(email, password); // Call the updated API
       
-      // Store token and user data
-      localStorage.setItem('authToken', response.access_token);
+      console.log('Login response received:', { 
+        hasAccessToken: !!response.access_token,
+        tokenType: response.token_type,
+        userInfo: !!response.user
+      });
+      
+      // Store token and user data - handle different possible token formats
+      const token = response.access_token || response.token || response.accessToken;
+      if (!token) {
+        throw new Error('No token received from server');
+      }
+      
+      localStorage.setItem('authToken', token);
       localStorage.setItem('userData', JSON.stringify(response.user));
+      
+      console.log('Token and user data stored in localStorage');
       
       // Update state
       setUser(response.user);

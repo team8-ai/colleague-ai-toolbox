@@ -9,15 +9,14 @@ export class AuthError extends Error {
   }
 }
 
-// Helper function to determine the base path
-function getBasePath() {
-  // In development, use the full base URL from config. In production, use the relative /api path.
-  return import.meta.env.DEV ? API_CONFIG.baseUrl : '/api';
-}
+// Base URL is the full path including /api, coming from config
+const API_BASE_URL = API_CONFIG.baseUrl;
 
 // Helper function for API requests
 async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-  const url = `${getBasePath()}${endpoint}`;
+  // Endpoint should start with /, ensure it does or adjust based on usage
+  // Assuming endpoint is like '/tools', '/tags'
+  const url = `${API_BASE_URL}${endpoint}`;
 
   // Default headers
   const headers: HeadersInit = {
@@ -27,18 +26,28 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   
   // Get auth token if available (for authenticated requests)
   const token = localStorage.getItem('authToken');
+  console.log(`API Request to ${endpoint} - Token exists: ${!!token}`);
+  
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+    // Keep debug log temporarily if needed, otherwise remove
+    // console.log('[DEBUG] Authorization Header:', headers['Authorization']); 
+  } else {
+    console.log('No auth token found in localStorage');
   }
   
-  // Make the request
+  // Keep debug log temporarily if needed, otherwise remove
+  // console.log('[DEBUG] Making fetch request with headers:', headers);
   const response = await fetch(url, {
     ...options,
     headers,
   });
 
+  console.log(`Response from ${endpoint}: status ${response.status}`);
+
   // Handle 401 Unauthorized - could indicate expired token
   if (response.status === 401) {
+    console.error('401 Unauthorized - clearing tokens');
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
     throw new AuthError('Unauthorized: Session expired. Please log in again.');
@@ -60,7 +69,10 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
 // Auth API
 export const authAPI = {
   login: async (email: string, password: string) => {
-    const url = `${getBasePath()}/auth/login`;
+    // Use the full base URL + /auth/login
+    const url = `${API_BASE_URL}/auth/login`;
+    
+    console.log(`Attempting login at: ${url}`);
       
     const response = await fetch(url, {
       method: 'POST',
@@ -70,12 +82,31 @@ export const authAPI = {
       body: JSON.stringify({ email, password }),
     });
     
+    console.log(`Login response status: ${response.status}`);
+    
     if (!response.ok) {
       const error = await response.json().catch(() => ({ detail: 'Login failed' }));
+      console.error('Login failed:', error);
       throw new Error(error.detail || 'Login failed');
     }
     
-    return response.json(); // Returns { access_token, token_type, user }
+    const data = await response.json();
+    console.log('Login response structure:', Object.keys(data));
+    
+    // Log token information with some obfuscation for security
+    if (data.access_token) {
+      console.log(`access_token exists, length: ${data.access_token.length}`);
+      console.log(`First 10 chars: ${data.access_token.substring(0, 10)}...`);
+    } else {
+      console.log('No access_token in response');
+    }
+    
+    if (data.token) {
+      console.log(`token exists, length: ${data.token.length}`);
+      console.log(`First 10 chars: ${data.token.substring(0, 10)}...`);
+    }
+    
+    return data; // Returns { access_token, token_type, user }
   },
     
   logout: async () => {
