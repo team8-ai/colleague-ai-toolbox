@@ -43,7 +43,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <Link to={contentRoute} className="flex-grow mr-2">
-            <CardTitle className="text-lg font-semibold line-clamp-1 hover:text-primary transition-colors">
+            <CardTitle className="text-lg font-semibold line-clamp-2 hover:text-primary transition-colors">
               {content.title}
             </CardTitle>
           </Link>
