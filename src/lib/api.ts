@@ -260,3 +260,68 @@ export const newsAPI = {
     });
   },
 };
+
+// Podcasts API
+export const podcastAPI = {
+  getAllPodcasts: async () => {
+    const data = await fetchAPI('/podcasts');
+    return data.map((item: any) => ({
+      id: item.id,
+      type: ContentType.PODCAST as ContentType.PODCAST,
+      title: item.title,
+      description: item.description,
+      tags: item.tags || [],
+      thumbnailUrl: item.image_url,
+      createdAt: item.created_at,
+      audioUrl: item.audio_url,
+      duration: item.duration || 0,
+      host: item.author?.displayName,
+      isLiked: item.isLiked,
+      content: item.content
+    }));
+  },
+  
+  getPodcastById: async (id: string) => {
+    const item = await fetchAPI(`/podcasts/${id}`);
+    if (!item) return null;
+    
+    return {
+      id: item.id,
+      type: ContentType.PODCAST as ContentType.PODCAST,
+      title: item.title,
+      description: item.description,
+      tags: item.tags || [],
+      thumbnailUrl: item.image_url,
+      createdAt: item.created_at,
+      audioUrl: item.audio_url,
+      duration: item.duration || 0,
+      host: item.author?.displayName,
+      isLiked: item.isLiked,
+      content: item.content
+    };
+  },
+  
+  getPodcastsByTag: async (tag: string) => {
+    const data = await fetchAPI(`/podcasts/tag/${encodeURIComponent(tag)}`);
+    return data.map((item: any) => ({
+      id: item.id,
+      type: ContentType.PODCAST as ContentType.PODCAST,
+      title: item.title,
+      description: item.description,
+      tags: item.tags || [],
+      thumbnailUrl: item.image_url,
+      createdAt: item.created_at,
+      audioUrl: item.audio_url,
+      duration: item.duration || 0,
+      host: item.author?.displayName,
+      isLiked: item.isLiked,
+      content: item.content
+    }));
+  },
+  
+  toggleLikePodcast: async (id: string) => {
+    return fetchAPI(`/podcasts/${id}/like`, {
+      method: 'POST',
+    });
+  },
+};
