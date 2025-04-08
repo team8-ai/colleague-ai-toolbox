@@ -96,6 +96,14 @@ const Header: React.FC = () => {
           </Button>
 
           {user ? (
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/liked" aria-label="Liked Content">
+                <Heart className="h-5 w-5" />
+              </Link>
+            </Button>
+          ) : null}
+
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -119,12 +127,6 @@ const Header: React.FC = () => {
                   <Link to="/profile" className="cursor-pointer flex items-center">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/liked" className="cursor-pointer flex items-center">
-                    <Heart className="mr-2 h-4 w-4" />
-                    <span>Liked Content</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
