@@ -99,10 +99,10 @@ const LikedContentPage: React.FC = () => {
       title: item.title,
       description: item.description,
       tags: item.tags || [],
-      thumbnailUrl: item.icon || undefined,
-      createdAt: item.publishedDate || new Date().toISOString(),
+      thumbnailUrl: item.image_url,
+      createdAt: item.published_date || new Date().toISOString(),
       likes: 1, // This item is liked
-      isLiked: true,
+      isLiked: item.liked,
     };
 
     // Type-specific properties
@@ -128,14 +128,14 @@ const LikedContentPage: React.FC = () => {
           type: ContentType.NEWS,
           sourceUrl: item.url || '#',
           author: item.author || 'Unknown',
-          publishDate: item.publishedDate || new Date().toISOString(),
+          publishDate: item.published_date || new Date().toISOString(),
         };
       case ContentType.PODCAST:
         return {
           ...baseContent,
           type: ContentType.PODCAST,
-          audioUrl: item.url || '#',
-          duration: 0,
+          audioUrl: item.audio_url || '#',
+          duration: item.duration || 0,
           host: item.author || 'Unknown',
         };
       default:
