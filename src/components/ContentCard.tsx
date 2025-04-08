@@ -40,7 +40,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
 
   return (
     <Card className="overflow-hidden h-full flex flex-col transition-all hover:shadow-lg border-transparent hover:border-primary/20 bg-background/60 backdrop-blur-sm">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-2 pt-10">
         <div className="flex justify-between items-start">
           <Link to={contentRoute} className="flex-grow mr-2">
             <CardTitle className="text-lg font-semibold line-clamp-2 hover:text-primary transition-colors">

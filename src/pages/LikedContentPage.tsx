@@ -229,7 +229,7 @@ const LikedContentPage: React.FC = () => {
     return (
       <Badge 
         variant="outline" 
-        className="absolute top-2 left-2 flex items-center gap-1 bg-background/80 backdrop-blur-sm"
+        className="absolute top-4 left-6 down-14 flex items-center gap-1 bg-background/80 backdrop-blur-sm"
       >
         {getContentTypeIcon(type)}
         <span>{labels[type] || type}</span>
