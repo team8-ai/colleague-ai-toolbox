@@ -52,12 +52,12 @@ const ContentCard: React.FC<ContentCardProps> = ({
       </CardHeader>
       <CardContent className="flex-grow pt-0">
         <Link to={contentRoute} className="block mb-3">
-          <div className="aspect-video rounded-md overflow-hidden bg-muted relative group">
+          <div className="aspect-video rounded-md overflow-hidden bg-white relative group">
             {content.thumbnailUrl ? (
               <img 
                 src={content.thumbnailUrl}
                 alt={content.title} 
-                className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-secondary text-secondary-foreground">

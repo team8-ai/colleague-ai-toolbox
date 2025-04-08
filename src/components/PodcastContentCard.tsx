@@ -77,12 +77,12 @@ const PodcastContentCard: React.FC<PodcastContentCardProps> = ({ content, onLike
     <Card className="overflow-hidden transition-all hover:shadow-md h-full flex flex-col">
       <CardHeader className="p-0">
         {localContent.thumbnailUrl && (
-          <div className="relative aspect-square w-full overflow-hidden">
+          <div className="relative aspect-video w-full overflow-hidden bg-white">
             <Link to={`/podcasts/${localContent.id}`}>
               <img
                 src={localContent.thumbnailUrl}
                 alt={localContent.title}
-                className="object-cover h-full w-full transition-transform hover:scale-105"
+                className="object-contain h-full w-full transition-transform hover:scale-105"
               />
             </Link>
           </div>
