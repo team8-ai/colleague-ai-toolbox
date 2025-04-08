@@ -194,3 +194,24 @@ export const documentsAPI = {
     });
   },
 };
+
+// News API
+export const newsAPI = {
+  getAllNews: async () => {
+    return fetchAPI('/news');
+  },
+  
+  getNewsById: async (id: string) => {
+    return fetchAPI(`/news/${id}`);
+  },
+  
+  getNewsByTag: async (tag: string) => {
+    return fetchAPI(`/news/tag/${encodeURIComponent(tag)}`);
+  },
+  
+  toggleLikeNews: async (id: string) => {
+    return fetchAPI(`/news/${id}/like`, {
+      method: 'POST',
+    });
+  },
+};

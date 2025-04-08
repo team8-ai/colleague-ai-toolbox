@@ -1,17 +1,15 @@
 import { NewsContent, ContentType } from '@/types/content';
-import { AuthError } from './api';
+import { AuthError, newsAPI } from './api';
+
+// Base URL for the news API
+const NEWS_API_BASE_URL = '/api/news';
 
 // Fetch all news items
 export async function getAllNews(): Promise<NewsContent[]> {
   try {
-    // This would be replaced with actual API call in production
-    // For now, return mock data
-    return mockNewsData;
+    return await newsAPI.getAllNews();
   } catch (error) {
     console.error('Error fetching news:', error);
-    if (error instanceof Response && error.status === 401) {
-      throw new AuthError('Authentication required to fetch news');
-    }
     throw error;
   }
 }
@@ -19,14 +17,9 @@ export async function getAllNews(): Promise<NewsContent[]> {
 // Fetch news items by tag
 export async function getNewsByTag(tag: string): Promise<NewsContent[]> {
   try {
-    // This would be replaced with actual API call in production
-    // For now, filter mock data
-    return mockNewsData.filter(news => news.tags.includes(tag));
+    return await newsAPI.getNewsByTag(tag);
   } catch (error) {
     console.error('Error fetching news by tag:', error);
-    if (error instanceof Response && error.status === 401) {
-      throw new AuthError('Authentication required to fetch news');
-    }
     throw error;
   }
 }
@@ -34,26 +27,13 @@ export async function getNewsByTag(tag: string): Promise<NewsContent[]> {
 // Fetch a single news item by ID
 export async function getNewsById(id: string): Promise<NewsContent> {
   try {
-    // This would be replaced with actual API call in production
-    // For now, find in mock data
-    const newsItem = mockNewsData.find(item => item.id === id);
-    
+    const newsItem = await newsAPI.getNewsById(id);
     if (!newsItem) {
       throw new Error(`News item with ID ${id} not found`);
     }
-    
-    return {
-      ...newsItem,
-      content: `<p>${newsItem.description}</p>
-                <p>This is sample content for this news article. In a real application, this would contain the full article text with proper HTML formatting.</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.</p>
-                <p>Cras ultricies, nunc quis ultricies aliquam, nisl nunc quis ultricies, quis ultricies nisl nunc quis ultricies.</p>`
-    };
+    return newsItem;
   } catch (error) {
     console.error('Error fetching news by ID:', error);
-    if (error instanceof Response && error.status === 401) {
-      throw new AuthError('Authentication required to fetch news');
-    }
     throw error;
   }
 }
@@ -61,19 +41,9 @@ export async function getNewsById(id: string): Promise<NewsContent> {
 // Toggle like for a news item
 export async function toggleLikeNews(id: string): Promise<void> {
   try {
-    // This would be replaced with actual API call in production
-    // For now, just mock the toggle in memory
-    const newsIndex = mockNewsData.findIndex(item => item.id === id);
-    
-    if (newsIndex !== -1) {
-      // Toggle the like status
-      mockNewsData[newsIndex].isLiked = !mockNewsData[newsIndex].isLiked;
-    }
+    await newsAPI.toggleLikeNews(id);
   } catch (error) {
     console.error('Error toggling news like:', error);
-    if (error instanceof Response && error.status === 401) {
-      throw new AuthError('Authentication required to like news');
-    }
     throw error;
   }
 }
