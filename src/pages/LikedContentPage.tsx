@@ -371,11 +371,6 @@ const LikedContentPage: React.FC = () => {
         </div>
       )}
 
-      {/* Debug info */}
-      <div className="mb-4 p-2 bg-muted rounded-md text-xs">
-        <p>Debug: Found {filteredContent.length} items to display</p>
-      </div>
-
       {/* Content grid */}
       {filteredContent.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
