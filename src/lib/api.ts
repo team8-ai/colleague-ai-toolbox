@@ -1,5 +1,6 @@
 // API client for communicating with our Postgres backend
 import { API_CONFIG } from './config';
+import { ContentType } from '@/types/content';
 
 // Define a custom error for authentication issues
 export class AuthError extends Error {
@@ -198,15 +199,59 @@ export const documentsAPI = {
 // News API
 export const newsAPI = {
   getAllNews: async () => {
-    return fetchAPI('/news');
+    const data = await fetchAPI('/news');
+    return data.map((item: any) => ({
+      id: item.id,
+      type: ContentType.NEWS,
+      title: item.title,
+      description: item.content,
+      tags: item.tags || [],
+      thumbnailUrl: item.image_url,
+      createdAt: item.createdAt,
+      sourceUrl: item.url,
+      author: item.author?.displayName,
+      publishDate: item.createdAt,
+      content: item.content,
+      isLiked: item.isLiked
+    }));
   },
   
   getNewsById: async (id: string) => {
-    return fetchAPI(`/news/${id}`);
+    const item = await fetchAPI(`/news/${id}`);
+    if (!item) return null;
+    
+    return {
+      id: item.id,
+      type: ContentType.NEWS,
+      title: item.title,
+      description: item.content,
+      tags: item.tags || [],
+      thumbnailUrl: item.image_url,
+      createdAt: item.createdAt,
+      sourceUrl: item.url,
+      author: item.author?.displayName,
+      publishDate: item.createdAt,
+      content: item.content,
+      isLiked: item.isLiked
+    };
   },
   
   getNewsByTag: async (tag: string) => {
-    return fetchAPI(`/news/tag/${encodeURIComponent(tag)}`);
+    const data = await fetchAPI(`/news/tag/${encodeURIComponent(tag)}`);
+    return data.map((item: any) => ({
+      id: item.id,
+      type: ContentType.NEWS,
+      title: item.title,
+      description: item.content,
+      tags: item.tags || [],
+      thumbnailUrl: item.image_url,
+      createdAt: item.createdAt,
+      sourceUrl: item.url,
+      author: item.author?.displayName,
+      publishDate: item.createdAt,
+      content: item.content,
+      isLiked: item.isLiked
+    }));
   },
   
   toggleLikeNews: async (id: string) => {
